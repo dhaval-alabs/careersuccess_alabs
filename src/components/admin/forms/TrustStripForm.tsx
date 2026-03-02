@@ -15,7 +15,7 @@ export function TrustStripForm({ data, onChange }: TrustStripFormProps) {
     const items = data.items || [];
 
     const handleAddItem = () => {
-        onChange({ ...data, items: [...items, { label: '', value: '' }] });
+        onChange({ ...data, items: [...items, { label: '', icon: '' }] });
     };
 
     const handleRemoveItem = (index: number) => {
@@ -23,7 +23,7 @@ export function TrustStripForm({ data, onChange }: TrustStripFormProps) {
         onChange({ ...data, items: newItems });
     };
 
-    const handleItemChange = (index: number, field: 'label' | 'value', value: string) => {
+    const handleItemChange = (index: number, field: 'label' | 'icon', value: string) => {
         const newItems = [...items];
         newItems[index] = { ...newItems[index], [field]: value };
         onChange({ ...data, items: newItems });
@@ -32,15 +32,15 @@ export function TrustStripForm({ data, onChange }: TrustStripFormProps) {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center pb-4 border-b">
-                <h3 className="text-sm font-medium text-slate-900">Stat Items ({items.length}/4 Recommended)</h3>
+                <h3 className="text-sm font-medium text-slate-900">Trust Items ({items.length}/5 Recommended)</h3>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddItem}>
-                    <Plus className="h-4 w-4 mr-2" /> Add Stat
+                    <Plus className="h-4 w-4 mr-2" /> Add Item
                 </Button>
             </div>
 
             {items.length === 0 ? (
                 <div className="text-center py-8 text-slate-500 border border-dashed rounded-lg">
-                    No stats added yet.
+                    No items added yet.
                 </div>
             ) : (
                 <div className="space-y-3">
@@ -51,20 +51,20 @@ export function TrustStripForm({ data, onChange }: TrustStripFormProps) {
                             </div>
                             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div>
-                                    <Label className="text-xs mb-1 block text-slate-500">Value</Label>
+                                    <Label className="text-xs mb-1 block text-slate-500">Icon / Emoji</Label>
                                     <Input
-                                        value={item.value}
-                                        onChange={(e) => handleItemChange(index, 'value', e.target.value)}
-                                        placeholder="e.g. 1.5 Lakh+"
+                                        value={item.icon || ''}
+                                        onChange={(e) => handleItemChange(index, 'icon', e.target.value)}
+                                        placeholder="e.g. 🎓"
                                         className="h-8"
                                     />
                                 </div>
                                 <div>
                                     <Label className="text-xs mb-1 block text-slate-500">Label</Label>
                                     <Input
-                                        value={item.label}
+                                        value={item.label || ''}
                                         onChange={(e) => handleItemChange(index, 'label', e.target.value)}
-                                        placeholder="e.g. Enrolled Students"
+                                        placeholder="e.g. Nasscom Certified..."
                                         className="h-8"
                                     />
                                 </div>

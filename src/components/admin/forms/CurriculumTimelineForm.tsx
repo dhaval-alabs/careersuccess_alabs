@@ -22,7 +22,7 @@ export function CurriculumTimelineForm({ data, onChange }: CurriculumTimelineFor
     };
 
     const addTerm = () => {
-        onChange({ ...data, terms: [...terms, { title: '', duration: '', description: '', core_skills: [] }] });
+        onChange({ ...data, terms: [...terms, { name: '', duration: '', description: '', tools: [] }] });
     };
 
     const removeTerm = (index: number) => {
@@ -30,9 +30,17 @@ export function CurriculumTimelineForm({ data, onChange }: CurriculumTimelineFor
         onChange({ ...data, terms: newTerms });
     };
 
-    const handleSkillsChange = (termIndex: number, skillsString: string) => {
-        const skillsArray = skillsString.split(',').map(s => s.trim()).filter(s => s !== '');
-        handleTermChange(termIndex, 'core_skills', skillsArray);
+    const handleToolsChange = (termIndex: number, toolsString: string) => {
+        // Convert comma separated string to objects \{ label, is_ai_tag \}
+        const toolsArray = toolsString
+            .split(',')
+            .map(s => s.trim())
+            .filter(s => s !== '')
+            .map(s => ({
+                label: s.replace('★', '').trim(),
+                is_ai_tag: s.includes('★')
+            }));
+        handleTermChange(termIndex, 'tools', toolsArray);
     };
 
     return (
@@ -78,10 +86,10 @@ export function CurriculumTimelineForm({ data, onChange }: CurriculumTimelineFor
                                 <div className="flex-1 space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <Label className="text-xs text-slate-500">Term Title</Label>
+                                            <Label className="text-xs text-slate-500">Term Name</Label>
                                             <Input
-                                                value={term.title || ''}
-                                                onChange={(e) => handleTermChange(index, 'title', e.target.value)}
+                                                value={term.name || ''}
+                                                onChange={(e) => handleTermChange(index, 'name', e.target.value)}
                                                 placeholder="e.g. Term 1: Foundations"
                                             />
                                         </div>
@@ -106,11 +114,11 @@ export function CurriculumTimelineForm({ data, onChange }: CurriculumTimelineFor
                                     </div>
 
                                     <div className="space-y-1">
-                                        <Label className="text-xs text-slate-500">Core Skills (Comma separated)</Label>
+                                        <Label className="text-xs text-slate-500">Tools (Comma separated. Add ★ for AI tag)</Label>
                                         <Input
-                                            value={(term.core_skills || []).join(', ')}
-                                            onChange={(e) => handleSkillsChange(index, e.target.value)}
-                                            placeholder="e.g. Python, SQL, Statistics"
+                                            value={(term.tools || []).map(t => t.is_ai_tag ? `${t.label} ★` : t.label).join(', ')}
+                                            onChange={(e) => handleToolsChange(index, e.target.value)}
+                                            placeholder="e.g. Python, SQL, GenAI ★"
                                         />
                                     </div>
                                 </div>
@@ -127,17 +135,6 @@ export function CurriculumTimelineForm({ data, onChange }: CurriculumTimelineFor
                         ))}
                     </div>
                 )}
-            </div>
-
-            {/* Tools Array string representation for simplicity in CMS right now */}
-            <div className="space-y-2 border-t pt-6">
-                <Label>Tools Taught (Comma separated URLs for icons)</Label>
-                <Textarea
-                    value={(data.tools || []).join(',\n')}
-                    onChange={(e) => onChange({ ...data, tools: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
-                    placeholder="https://icon1.png, https://icon2.png"
-                    rows={3}
-                />
             </div>
         </div>
     );

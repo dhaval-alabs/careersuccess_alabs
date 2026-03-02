@@ -22,17 +22,12 @@ export function JobRolesForm({ data, onChange }: JobRolesFormProps) {
     };
 
     const addRole = () => {
-        onChange({ ...data, roles: [...roles, { title: '', description: '', salary_range: '', skills: [] }] });
+        onChange({ ...data, roles: [...roles, { icon: '', title: '', description: '' }] });
     };
 
     const removeRole = (index: number) => {
         const newRoles = roles.filter((_, i) => i !== index);
         onChange({ ...data, roles: newRoles });
-    };
-
-    const handleSkillsChange = (index: number, skillsString: string) => {
-        const skillsArray = skillsString.split(',').map(s => s.trim()).filter(Boolean);
-        handleRoleChange(index, 'skills', skillsArray);
     };
 
     return (
@@ -85,11 +80,11 @@ export function JobRolesForm({ data, onChange }: JobRolesFormProps) {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs text-slate-500">Salary Range</Label>
+                                        <Label className="text-xs text-slate-500">Emoji / Icon</Label>
                                         <Input
-                                            value={role.salary_range || ''}
-                                            onChange={(e) => handleRoleChange(index, 'salary_range', e.target.value)}
-                                            placeholder="e.g. ₹8L - ₹15L /yr"
+                                            value={role.icon || ''}
+                                            onChange={(e) => handleRoleChange(index, 'icon', e.target.value)}
+                                            placeholder="e.g. 🤖"
                                         />
                                     </div>
                                     <div className="space-y-2 md:col-span-2">
@@ -99,14 +94,6 @@ export function JobRolesForm({ data, onChange }: JobRolesFormProps) {
                                             onChange={(e) => handleRoleChange(index, 'description', e.target.value)}
                                             placeholder="What does this role do?"
                                             rows={2}
-                                        />
-                                    </div>
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label className="text-xs text-slate-500">Key Skills (Comma separated)</Label>
-                                        <Input
-                                            value={(role.skills || []).join(', ')}
-                                            onChange={(e) => handleSkillsChange(index, e.target.value)}
-                                            placeholder="e.g. Python, Machine Learning, SQL"
                                         />
                                     </div>
                                 </div>

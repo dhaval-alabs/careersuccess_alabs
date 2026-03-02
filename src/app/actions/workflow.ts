@@ -23,7 +23,7 @@ async function logAuditAction(
 }
 
 export async function submitForReview(pageId: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) throw new Error("Unauthorized");
@@ -43,7 +43,7 @@ export async function submitForReview(pageId: string) {
 }
 
 export async function publishPage(pageId: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
@@ -101,7 +101,7 @@ export async function publishPage(pageId: string) {
 }
 
 export async function rejectPage(pageId: string, reason: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
@@ -120,7 +120,7 @@ export async function rejectPage(pageId: string, reason: string) {
 }
 
 export async function unpublishPage(pageId: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
@@ -144,7 +144,7 @@ export async function unpublishPage(pageId: string) {
 }
 
 export async function restoreVersion(pageId: string, versionId: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 

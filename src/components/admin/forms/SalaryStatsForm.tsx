@@ -2,6 +2,9 @@
 
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { SalaryStatsProps } from '@/components/public/sections/SalaryStats';
 
 interface SalaryStatsFormProps {
@@ -10,177 +13,190 @@ interface SalaryStatsFormProps {
 }
 
 export function SalaryStatsForm({ data, onChange }: SalaryStatsFormProps) {
-    const handleLevelsChange = (levelObj: 'freshers' | 'experienced', field: string, value: string) => {
-        onChange({
-            ...data,
-            salary_levels: {
-                ...(data.salary_levels || {
-                    freshers: { label: 'Freshers (0-2 Yrs)', ctc: '' },
-                    experienced: { label: 'Experienced (3+ Yrs)', ctc: '', max_ctc: '' }
-                }),
-                [levelObj]: {
-                    ...(data.salary_levels?.[levelObj] || {}),
-                    [field]: value
-                }
-            }
-        });
+    const salaryLevels = data.salary_levels || [];
+    const stats = data.stats || [];
+
+    const handleLevelChange = (index: number, field: string, value: any) => {
+        const newLevels = [...salaryLevels];
+        newLevels[index] = { ...newLevels[index], [field]: value };
+        onChange({ ...data, salary_levels: newLevels });
     };
 
-    const handleStatChange = (statObj: 'hiring_partners' | 'avg_hike' | 'placements', field: string, value: string) => {
-        onChange({
-            ...data,
-            key_stats: {
-                ...(data.key_stats || {
-                    hiring_partners: { value: '', label: '' },
-                    avg_hike: { value: '', label: '' },
-                    placements: { value: '', label: '' }
-                }),
-                [statObj]: {
-                    ...(data.key_stats?.[statObj] || {}),
-                    [field]: value
-                }
-            }
-        });
+    const addLevel = () => {
+        onChange({ ...data, salary_levels: [...salaryLevels, { label: '', percentage: 0, amount: '' }] });
+    };
+
+    const removeLevel = (index: number) => {
+        const newLevels = salaryLevels.filter((_, i) => i !== index);
+        onChange({ ...data, salary_levels: newLevels });
+    };
+
+    const handleStatChange = (index: number, field: string, value: any) => {
+        const newStats = [...stats];
+        newStats[index] = { ...newStats[index], [field]: value };
+        onChange({ ...data, stats: newStats });
+    };
+
+    const addStat = () => {
+        onChange({ ...data, stats: [...stats, { big_text: '', small_text: '' }] });
+    };
+
+    const removeStat = (index: number) => {
+        const newStats = stats.filter((_, i) => i !== index);
+        onChange({ ...data, stats: newStats });
     };
 
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4 border-b pb-6">
+                <h3 className="font-semibold text-lg">Header</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>Section Label</Label>
+                        <Input
+                            value={data.section_label || ''}
+                            onChange={(e) => onChange({ ...data, section_label: e.target.value })}
+                            placeholder="e.g. Earning Potential"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Headline</Label>
+                        <Input
+                            value={data.headline || ''}
+                            onChange={(e) => onChange({ ...data, headline: e.target.value })}
+                            placeholder="e.g. Skills That Pay More"
+                        />
+                    </div>
+                </div>
                 <div className="space-y-2">
-                    <Label>Headline</Label>
-                    <Input
-                        value={data.headline || ''}
-                        onChange={(e) => onChange({ ...data, headline: e.target.value })}
-                        placeholder="e.g. Industry Valued Outcomes"
+                    <Label>Description</Label>
+                    <Textarea
+                        value={data.description || ''}
+                        onChange={(e) => onChange({ ...data, description: e.target.value })}
+                        placeholder="Description..."
+                        rows={2}
                     />
                 </div>
             </div>
 
-            <div className="border-t pt-6 space-y-6">
-                <h3 className="font-semibold text-lg">Salary Levels</h3>
+            <div className="space-y-4 border-b pb-6">
+                <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-lg">Salary Levels</h3>
+                    <Button type="button" variant="outline" size="sm" onClick={addLevel}>
+                        <Plus className="h-4 w-4 mr-2" /> Add Level
+                    </Button>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Freshers */}
-                    <div className="bg-slate-50 p-4 rounded-lg border">
-                        <h4 className="font-medium text-sm mb-4 pb-2 border-b">Freshers Level</h4>
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs">Category Label</Label>
-                                <Input
-                                    value={data.salary_levels?.freshers?.label || 'Freshers (0-2 Yrs)'}
-                                    onChange={(e) => handleLevelsChange('freshers', 'label', e.target.value)}
-                                />
+                <div className="space-y-4">
+                    {salaryLevels.map((level, index) => (
+                        <div key={index} className="flex gap-4 items-start bg-slate-50 p-4 rounded-md border">
+                            <div className="cursor-grab text-slate-400 mt-2 opacity-50 hover:opacity-100">
+                                <GripVertical className="h-5 w-5" />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs">Average CTC</Label>
-                                <Input
-                                    value={data.salary_levels?.freshers?.ctc || ''}
-                                    onChange={(e) => handleLevelsChange('freshers', 'ctc', e.target.value)}
-                                    placeholder="e.g. ₹9.4 LPA"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Experienced */}
-                    <div className="bg-slate-50 p-4 rounded-lg border">
-                        <h4 className="font-medium text-sm mb-4 pb-2 border-b">Experienced Level</h4>
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs">Category Label</Label>
-                                <Input
-                                    value={data.salary_levels?.experienced?.label || 'Experienced (3+ Yrs)'}
-                                    onChange={(e) => handleLevelsChange('experienced', 'label', e.target.value)}
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
-                                    <Label className="text-xs">Average CTC</Label>
+                                    <Label className="text-xs text-slate-500">Label</Label>
                                     <Input
-                                        value={data.salary_levels?.experienced?.ctc || ''}
-                                        onChange={(e) => handleLevelsChange('experienced', 'ctc', e.target.value)}
-                                        placeholder="e.g. ₹15 LPA"
+                                        value={level.label || ''}
+                                        onChange={(e) => handleLevelChange(index, 'label', e.target.value)}
+                                        placeholder="e.g. Entry Level"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs">Max CTC</Label>
+                                    <Label className="text-xs text-slate-500">Percentage (0-100)</Label>
                                     <Input
-                                        value={data.salary_levels?.experienced?.max_ctc || ''}
-                                        onChange={(e) => handleLevelsChange('experienced', 'max_ctc', e.target.value)}
-                                        placeholder="e.g. ₹32 LPA"
+                                        type="number"
+                                        value={level.percentage || 0}
+                                        onChange={(e) => handleLevelChange(index, 'percentage', parseInt(e.target.value) || 0)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs text-slate-500">Amount</Label>
+                                    <Input
+                                        value={level.amount || ''}
+                                        onChange={(e) => handleLevelChange(index, 'amount', e.target.value)}
+                                        placeholder="e.g. ~₹6 LPA"
                                     />
                                 </div>
                             </div>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeLevel(index)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 mt-1"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
                         </div>
-                    </div>
+                    ))}
                 </div>
             </div>
 
-            <div className="border-t pt-6 space-y-6">
-                <h3 className="font-semibold text-lg">Key Statistics</h3>
+            <div className="space-y-4 border-b pb-6">
+                <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-lg">Key Statistics</h3>
+                    <Button type="button" variant="outline" size="sm" onClick={addStat}>
+                        <Plus className="h-4 w-4 mr-2" /> Add Stat
+                    </Button>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Hiring Partners */}
-                    <div className="bg-slate-50 p-4 rounded-lg border space-y-3">
-                        <h4 className="font-medium text-sm text-slate-500">Stat 1: Hiring Partners</h4>
-                        <div className="space-y-2">
-                            <Label className="text-xs">Value</Label>
-                            <Input
-                                value={data.key_stats?.hiring_partners?.value || ''}
-                                onChange={(e) => handleStatChange('hiring_partners', 'value', e.target.value)}
-                                placeholder="e.g. 500+"
-                            />
+                <div className="space-y-4">
+                    {stats.map((stat, index) => (
+                        <div key={index} className="flex gap-4 items-start bg-slate-50 p-4 rounded-md border">
+                            <div className="cursor-grab text-slate-400 mt-2 opacity-50 hover:opacity-100">
+                                <GripVertical className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-xs text-slate-500">Big Text Value</Label>
+                                    <Input
+                                        value={stat.big_text || ''}
+                                        onChange={(e) => handleStatChange(index, 'big_text', e.target.value)}
+                                        placeholder="e.g. 20–30%"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs text-slate-500">Small Text Label</Label>
+                                    <Input
+                                        value={stat.small_text || ''}
+                                        onChange={(e) => handleStatChange(index, 'small_text', e.target.value)}
+                                        placeholder="e.g. Higher salary..."
+                                    />
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeStat(index)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 mt-1"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-xs">Label</Label>
-                            <Input
-                                value={data.key_stats?.hiring_partners?.label || ''}
-                                onChange={(e) => handleStatChange('hiring_partners', 'label', e.target.value)}
-                                placeholder="e.g. Hiring Partners"
-                            />
-                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Certification Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>Certification Title</Label>
+                        <Input
+                            value={data.cert_title || ''}
+                            onChange={(e) => onChange({ ...data, cert_title: e.target.value })}
+                            placeholder="e.g. Dual Certification"
+                        />
                     </div>
-
-                    {/* Avg Hike */}
-                    <div className="bg-slate-50 p-4 rounded-lg border space-y-3">
-                        <h4 className="font-medium text-sm text-slate-500">Stat 2: Avg Hike</h4>
-                        <div className="space-y-2">
-                            <Label className="text-xs">Value</Label>
-                            <Input
-                                value={data.key_stats?.avg_hike?.value || ''}
-                                onChange={(e) => handleStatChange('avg_hike', 'value', e.target.value)}
-                                placeholder="e.g. 65%"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-xs">Label</Label>
-                            <Input
-                                value={data.key_stats?.avg_hike?.label || ''}
-                                onChange={(e) => handleStatChange('avg_hike', 'label', e.target.value)}
-                                placeholder="e.g. Avg. Salary Hike"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Placements */}
-                    <div className="bg-slate-50 p-4 rounded-lg border space-y-3">
-                        <h4 className="font-medium text-sm text-slate-500">Stat 3: Placements</h4>
-                        <div className="space-y-2">
-                            <Label className="text-xs">Value</Label>
-                            <Input
-                                value={data.key_stats?.placements?.value || ''}
-                                onChange={(e) => handleStatChange('placements', 'value', e.target.value)}
-                                placeholder="e.g. 15,000+"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-xs">Label</Label>
-                            <Input
-                                value={data.key_stats?.placements?.label || ''}
-                                onChange={(e) => handleStatChange('placements', 'label', e.target.value)}
-                                placeholder="e.g. Successful Placements"
-                            />
-                        </div>
+                    <div className="space-y-2">
+                        <Label>Certification Description</Label>
+                        <Input
+                            value={data.cert_desc || ''}
+                            onChange={(e) => onChange({ ...data, cert_desc: e.target.value })}
+                            placeholder="e.g. Backed by Gov..."
+                        />
                     </div>
                 </div>
             </div>

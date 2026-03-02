@@ -13,208 +13,217 @@ interface TracksFeesFormProps {
 }
 
 export function TracksFeesForm({ data, onChange }: TracksFeesFormProps) {
-    const defaultData = {
-        eyebrow_label: data.eyebrow_label || '',
-        headline: data.headline || '',
-        description: data.description || '',
-        certification_track: data.certification_track || {
-            title: '',
-            monthly_emi: '',
-            total_fee: '',
-            features: [],
-            cta: { label: '', url: '' }
-        },
-        job_guarantee_track: data.job_guarantee_track || {
-            title: '',
-            monthly_emi: '',
-            total_fee: '',
-            features: [],
-            cta: { label: '', url: '' },
-            highlight_label: ''
-        }
+    const tracks = data.tracks || [];
+    const guarantee = data.guarantee || { icon: '', title: '', description: '', cta_label: '', cta_url: '' };
+
+    const handleTrackChange = (index: number, field: string, value: any) => {
+        const newTracks = [...tracks];
+        newTracks[index] = { ...newTracks[index], [field]: value };
+        onChange({ ...data, tracks: newTracks });
     };
 
-    const handleTrackChange = (trackName: 'certification_track' | 'job_guarantee_track', field: string, value: any) => {
+    const addTrack = () => {
         onChange({
-            ...defaultData,
-            [trackName]: {
-                ...defaultData[trackName],
-                [field]: value
-            }
+            ...data,
+            tracks: [
+                ...tracks,
+                { style: 'primary', label: '', title: '', description: '', price: '', price_note: '', cta_label: '', cta_url: '' }
+            ]
         });
     };
 
-    const handleTrackFeaturesChange = (trackName: 'certification_track' | 'job_guarantee_track', featuresString: string) => {
-        const featuresArray = featuresString.split('\n').map(s => s.trim()).filter(Boolean);
-        handleTrackChange(trackName, 'features', featuresArray);
+    const removeTrack = (index: number) => {
+        const newTracks = tracks.filter((_, i) => i !== index);
+        onChange({ ...data, tracks: newTracks });
+    };
+
+    const handleGuaranteeChange = (field: string, value: any) => {
+        onChange({ ...data, guarantee: { ...guarantee, [field]: value } });
     };
 
     return (
         <div className="space-y-8">
-            {/* Header Content */}
-            <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Header Content</h3>
+            <div className="space-y-4 border-b pb-6">
+                <h3 className="font-semibold text-lg">Header</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label>Eyebrow Label</Label>
+                        <Label>Section Label</Label>
                         <Input
-                            value={defaultData.eyebrow_label}
-                            onChange={(e) => onChange({ ...defaultData, eyebrow_label: e.target.value })}
-                            placeholder="e.g. OPTIONS TAILORED FOR YOU"
+                            value={data.section_label || ''}
+                            onChange={(e) => onChange({ ...data, section_label: e.target.value })}
+                            placeholder="e.g. Choose Your Path"
                         />
                     </div>
                     <div className="space-y-2">
                         <Label>Headline</Label>
                         <Input
-                            value={defaultData.headline}
-                            onChange={(e) => onChange({ ...defaultData, headline: e.target.value })}
-                            placeholder="e.g. Flexible Tracks & Fees"
+                            value={data.headline || ''}
+                            onChange={(e) => onChange({ ...data, headline: e.target.value })}
+                            placeholder="e.g. Pick the Track That Matches Your Ambition"
                         />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label>Description</Label>
                     <Textarea
-                        value={defaultData.description}
-                        onChange={(e) => onChange({ ...defaultData, description: e.target.value })}
-                        placeholder="Choose the learning track that fits your career goals..."
+                        value={data.description || ''}
+                        onChange={(e) => onChange({ ...data, description: e.target.value })}
+                        placeholder="Most working professionals go for..."
                         rows={2}
                     />
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                {/* Certification Track */}
-                <div className="space-y-4 bg-slate-50 p-5 rounded-xl border">
-                    <h3 className="font-semibold text-base text-slate-800">Track 1: Certification Track</h3>
-
-                    <div className="space-y-2">
-                        <Label>Title</Label>
-                        <Input
-                            value={defaultData.certification_track.title}
-                            onChange={(e) => handleTrackChange('certification_track', 'title', e.target.value)}
-                            placeholder="e.g. Professional Certification"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label>Monthly EMI</Label>
-                            <Input
-                                value={defaultData.certification_track.monthly_emi}
-                                onChange={(e) => handleTrackChange('certification_track', 'monthly_emi', e.target.value)}
-                                placeholder="e.g. ₹4,999/mo"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Total Fee</Label>
-                            <Input
-                                value={defaultData.certification_track.total_fee}
-                                onChange={(e) => handleTrackChange('certification_track', 'total_fee', e.target.value)}
-                                placeholder="e.g. ₹35,000 + GST"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label>Features (One per line)</Label>
-                        <Textarea
-                            value={(defaultData.certification_track.features || []).join('\n')}
-                            onChange={(e) => handleTrackFeaturesChange('certification_track', e.target.value)}
-                            rows={5}
-                            placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 pt-2">
-                        <div className="space-y-2">
-                            <Label>CTA Label</Label>
-                            <Input
-                                value={defaultData.certification_track.cta?.label || ''}
-                                onChange={(e) => handleTrackChange('certification_track', 'cta', { ...defaultData.certification_track.cta, label: e.target.value })}
-                                placeholder="Apply Now"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>CTA URL</Label>
-                            <Input
-                                value={defaultData.certification_track.cta?.url || ''}
-                                onChange={(e) => handleTrackChange('certification_track', 'cta', { ...defaultData.certification_track.cta, url: e.target.value })}
-                                placeholder="#enroll"
-                            />
-                        </div>
-                    </div>
+            <div className="space-y-4 border-b pb-6">
+                <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-lg">Tracks</h3>
+                    <Button type="button" variant="outline" size="sm" onClick={addTrack}>
+                        <Plus className="h-4 w-4 mr-2" /> Add Track
+                    </Button>
                 </div>
 
-                {/* Job Guarantee Track */}
-                <div className="space-y-4 bg-blue-50/50 p-5 rounded-xl border border-blue-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-bl-lg">
-                        Premium Track
-                    </div>
-                    <h3 className="font-semibold text-base text-slate-800">Track 2: Job Guarantee Track</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {tracks.map((track, index) => (
+                        <div key={index} className={`space-y-4 p-5 rounded-xl border relative ${track.style === 'primary' ? 'bg-slate-50' : 'bg-blue-50 border-blue-200'}`}>
+                            <div className="absolute top-2 right-2 flex gap-1 bg-white rounded-md shadow-sm border opacity-50 hover:opacity-100 transition-opacity">
+                                <div className="p-1.5 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600">
+                                    <GripVertical className="h-4 w-4" />
+                                </div>
+                                <div
+                                    className="p-1.5 cursor-pointer text-red-400 hover:text-red-600 border-l"
+                                    onClick={() => removeTrack(index)}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </div>
+                            </div>
 
-                    <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-2 gap-4 pt-4">
+                                <div className="space-y-2">
+                                    <Label>Style</Label>
+                                    <select
+                                        className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        value={track.style || 'primary'}
+                                        onChange={(e) => handleTrackChange(index, 'style', e.target.value)}
+                                    >
+                                        <option value="primary">Primary (Standard)</option>
+                                        <option value="secondary">Secondary (Highlighted)</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Small Label (Badge)</Label>
+                                    <Input
+                                        value={track.label || ''}
+                                        onChange={(e) => handleTrackChange(index, 'label', e.target.value)}
+                                        placeholder="e.g. Track 1"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Title</Label>
+                                <Input
+                                    value={track.title || ''}
+                                    onChange={(e) => handleTrackChange(index, 'title', e.target.value)}
+                                    placeholder="e.g. Core Data Analytics"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Description</Label>
+                                <Textarea
+                                    value={track.description || ''}
+                                    onChange={(e) => handleTrackChange(index, 'description', e.target.value)}
+                                    rows={3}
+                                    placeholder="The complete foundation..."
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Price</Label>
+                                    <Input
+                                        value={track.price || ''}
+                                        onChange={(e) => handleTrackChange(index, 'price', e.target.value)}
+                                        placeholder="e.g. ₹52,000"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Price Note</Label>
+                                    <Input
+                                        value={track.price_note || ''}
+                                        onChange={(e) => handleTrackChange(index, 'price_note', e.target.value)}
+                                        placeholder="e.g. + GST  ·  6 months"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>CTA Label</Label>
+                                    <Input
+                                        value={track.cta_label || ''}
+                                        onChange={(e) => handleTrackChange(index, 'cta_label', e.target.value)}
+                                        placeholder="Start with Core →"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>CTA URL</Label>
+                                    <Input
+                                        value={track.cta_url || ''}
+                                        onChange={(e) => handleTrackChange(index, 'cta_url', e.target.value)}
+                                        placeholder="#enroll"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="space-y-4 border-b pb-6">
+                <h3 className="font-semibold text-lg">Guarantee Box</h3>
+                <div className="grid grid-cols-1 gap-4 p-5 rounded-xl border bg-green-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label>Highlight Label (Badge)</Label>
+                            <Label>Icon / Emoji</Label>
                             <Input
-                                value={defaultData.job_guarantee_track.highlight_label || ''}
-                                onChange={(e) => handleTrackChange('job_guarantee_track', 'highlight_label', e.target.value)}
-                                placeholder="e.g. MOST POPULAR"
+                                value={guarantee.icon || ''}
+                                onChange={(e) => handleGuaranteeChange('icon', e.target.value)}
+                                placeholder="e.g. 🛡️"
                             />
                         </div>
                         <div className="space-y-2">
                             <Label>Title</Label>
                             <Input
-                                value={defaultData.job_guarantee_track.title}
-                                onChange={(e) => handleTrackChange('job_guarantee_track', 'title', e.target.value)}
-                                placeholder="e.g. Job Guarantee Program"
+                                value={guarantee.title || ''}
+                                onChange={(e) => handleGuaranteeChange('title', e.target.value)}
+                                placeholder="e.g. We Back It With a Real Guarantee"
                             />
                         </div>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label>Monthly EMI</Label>
-                            <Input
-                                value={defaultData.job_guarantee_track.monthly_emi}
-                                onChange={(e) => handleTrackChange('job_guarantee_track', 'monthly_emi', e.target.value)}
-                                placeholder="e.g. ₹9,999/mo"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Total Fee</Label>
-                            <Input
-                                value={defaultData.job_guarantee_track.total_fee}
-                                onChange={(e) => handleTrackChange('job_guarantee_track', 'total_fee', e.target.value)}
-                                placeholder="e.g. ₹65,000 + GST"
-                            />
-                        </div>
-                    </div>
-
                     <div className="space-y-2">
-                        <Label>Features (One per line)</Label>
+                        <Label>Description</Label>
                         <Textarea
-                            value={(defaultData.job_guarantee_track.features || []).join('\n')}
-                            onChange={(e) => handleTrackFeaturesChange('job_guarantee_track', e.target.value)}
-                            rows={5}
-                            placeholder="Everything in Certification +&#10;100% Job Guarantee&#10;Mock Interviews"
+                            value={guarantee.description || ''}
+                            onChange={(e) => handleGuaranteeChange('description', e.target.value)}
+                            rows={2}
+                            placeholder="If you complete the program..."
                         />
                     </div>
-
-                    <div className="grid grid-cols-2 gap-4 pt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label>CTA Label</Label>
                             <Input
-                                value={defaultData.job_guarantee_track.cta?.label || ''}
-                                onChange={(e) => handleTrackChange('job_guarantee_track', 'cta', { ...defaultData.job_guarantee_track.cta, label: e.target.value })}
-                                placeholder="Apply for Job Guarantee"
+                                value={guarantee.cta_label || ''}
+                                onChange={(e) => handleGuaranteeChange('cta_label', e.target.value)}
+                                placeholder="Claim Your Seat →"
                             />
                         </div>
                         <div className="space-y-2">
                             <Label>CTA URL</Label>
                             <Input
-                                value={defaultData.job_guarantee_track.cta?.url || ''}
-                                onChange={(e) => handleTrackChange('job_guarantee_track', 'cta', { ...defaultData.job_guarantee_track.cta, url: e.target.value })}
+                                value={guarantee.cta_url || ''}
+                                onChange={(e) => handleGuaranteeChange('cta_url', e.target.value)}
                                 placeholder="#enroll"
                             />
                         </div>

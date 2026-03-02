@@ -25,15 +25,10 @@ export function LearningModesForm({ data, onChange }: LearningModesFormProps) {
         onChange({ ...defaultData, modes: newModes });
     };
 
-    const handleFeaturesChange = (index: number, featuresString: string) => {
-        const featuresArray = featuresString.split('\n').map(s => s.trim()).filter(Boolean);
-        handleModeChange(index, 'features', featuresArray);
-    };
-
     const addMode = () => {
         onChange({
             ...defaultData,
-            modes: [...defaultData.modes, { title: '', icon: '', description: '', features: [] }]
+            modes: [...defaultData.modes, { title: '', icon: '', description: '' }]
         });
     };
 
@@ -55,15 +50,15 @@ export function LearningModesForm({ data, onChange }: LearningModesFormProps) {
                             placeholder="e.g. Choose Your Mode of Learning"
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label>Description</Label>
-                        <Textarea
-                            value={defaultData.description}
-                            onChange={(e) => onChange({ ...defaultData, description: e.target.value })}
-                            placeholder="Multiple delivery formats tailored to your schedule..."
-                            rows={2}
-                        />
-                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Textarea
+                        value={defaultData.description}
+                        onChange={(e) => onChange({ ...defaultData, description: e.target.value })}
+                        placeholder="Multiple delivery formats tailored to your schedule..."
+                        rows={2}
+                    />
                 </div>
             </div>
 
@@ -106,11 +101,11 @@ export function LearningModesForm({ data, onChange }: LearningModesFormProps) {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Icon SVG Path / Class</Label>
+                                            <Label>Icon / Emoji</Label>
                                             <Input
                                                 value={mode.icon || ''}
                                                 onChange={(e) => handleModeChange(index, 'icon', e.target.value)}
-                                                placeholder="Not yet active in rendering"
+                                                placeholder="e.g. 💻"
                                             />
                                         </div>
                                     </div>
@@ -122,16 +117,6 @@ export function LearningModesForm({ data, onChange }: LearningModesFormProps) {
                                             onChange={(e) => handleModeChange(index, 'description', e.target.value)}
                                             placeholder="Learn in-person..."
                                             rows={2}
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>Features (One per line)</Label>
-                                        <Textarea
-                                            value={(mode.features || []).join('\n')}
-                                            onChange={(e) => handleFeaturesChange(index, e.target.value)}
-                                            placeholder="Weekend classes&#10;In-person mentoring"
-                                            rows={4}
                                         />
                                     </div>
                                 </div>
