@@ -1,0 +1,130 @@
+"use client";
+
+import { useEffect } from 'react';
+import { useSearchParams, usePathname } from 'next/navigation';
+import Script from 'next/script';
+
+export interface AnalyticsTrackerProps {
+    ga4Id?: string;
+    metaPixelId?: string;
+    pageId: string;
+}
+
+export function AnalyticsTracker({ ga4Id, metaPixelId, pageId }: AnalyticsTrackerProps) {
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+
+    // 1. UTM Parameter Capture
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const utmObj: Record<string, string> = {};
+            const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+
+            let hasUtms = false;
+
+            utmKeys.forEach(key => {
+                const val = searchParams.get(key);
+                if (val) {
+                    utmObj[key] = val;
+                    hasUtms = true;
+                }
+            });
+
+            if (hasUtms) {
+                // Only override if new UTMs exist, or append
+                sessionStorage.setItem('current_utms', JSON.stringify(utmObj));
+            }
+        }
+    }, [searchParams]);
+
+    // 2. Custom page_view event & tracking initialization
+    useEffect(() => {
+        // Basic auto-fired page_view mapped to the specific CMS page
+        if (typeof window !== 'undefined') {
+            // DataLayer for GA4
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'cms_page_view',
+                page_id: pageId,
+                page_path: pathname
+            });
+
+            // Meta Pixel standard page view tracked via their script normally, 
+            // but we can add custom if needed
+            if ((window as any).fbq) {
+                (window as any).fbq('trackCustom', 'CMSPageView', { page_id: pageId });
+            }
+
+            // Add click tracking to all CTA buttons
+            const ctaButtons = document.querySelectorAll('a[href^="#enroll"], .btn-primary-custom, .btn-secondary-custom');
+
+            const handleCtaClick = (e: Event) => {
+                const target = e.currentTarget as HTMLAnchorElement;
+
+                // GA4
+                window.dataLayer.push({
+                    event: 'cta_click',
+                    page_id: pageId,
+                    cta_label: target.innerText || target.textContent,
+                    cta_href: target.getAttribute('href')
+                });
+
+                // Meta
+                if ((window as any).fbq) {
+                    (window as any).fbq('trackCustom', 'CTAClick', {
+                        page_id: pageId,
+                        button_label: target.innerText
+                    });
+                }
+            };
+
+            ctaButtons.forEach(btn => btn.addEventListener('click', handleCtaClick));
+
+            return () => {
+                ctaButtons.forEach(btn => btn.removeEventListener('click', handleCtaClick));
+            };
+        }
+    }, [pathname, pageId]);
+
+    return (
+        <>
+            {/* GA4 Script Injection */}
+            {ga4Id && (
+                <>
+                    <Script
+                        src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
+                        strategy="afterInteractive"
+                    />
+                    <Script id="ga4-init" strategy="afterInteractive">
+                        {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${ga4Id}', {
+                page_path: window.location.pathname,
+              });
+            `}
+                    </Script>
+                </>
+            )}
+
+            {/* Meta Pixel Script Injection */}
+            {metaPixelId && (
+                <Script id="meta-pixel" strategy="afterInteractive">
+                    {`
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '${metaPixelId}');
+            fbq('track', 'PageView');
+          `}
+                </Script>
+            )}
+        </>
+    );
+}
