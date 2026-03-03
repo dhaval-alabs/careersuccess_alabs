@@ -2,6 +2,24 @@
 
 import { createClient } from '@/utils/supabase/server';
 
+export async function logAuditAction(
+    supabase: any,
+    userId: string,
+    action: string,
+    targetType: string,
+    targetId: string,
+    metadata?: any
+) {
+    const { error } = await supabase.from('audit_logs').insert({
+        user_id: userId,
+        action,
+        target_type: targetType,
+        target_id: targetId,
+        metadata: metadata || {}
+    });
+    if (error) console.error("Audit log error:", error);
+}
+
 export async function getAuditLogs() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

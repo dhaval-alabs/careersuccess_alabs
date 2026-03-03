@@ -3,24 +3,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-// Helper to log audit actions
-async function logAuditAction(
-    supabase: any,
-    userId: string,
-    action: string,
-    targetType: string,
-    targetId: string,
-    metadata?: any
-) {
-    const { error } = await supabase.from('audit_logs').insert({
-        user_id: userId,
-        action,
-        target_type: targetType,
-        target_id: targetId,
-        metadata: metadata || {}
-    });
-    if (error) console.error("Audit log error:", error);
-}
+import { logAuditAction } from '@/app/actions/audit';
 
 export async function submitForReview(pageId: string) {
     const supabase = await createClient();
