@@ -15,10 +15,7 @@ export default async function AuditLogsPage() {
     // Fetch the latest 500 audit logs
     const { data: logs, error } = await supabase
         .from('audit_logs')
-        .select(`
-            *,
-            users:user_id(email, name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(500);
 
@@ -26,16 +23,5 @@ export default async function AuditLogsPage() {
         console.error("Failed to fetch audit logs:", error);
     }
 
-    return (
-        <div className="p-6 max-w-7xl mx-auto space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900">Audit Logs</h1>
-                <p className="text-muted-foreground mt-2">
-                    Review recent system actions. Limited to the last 500 records.
-                </p>
-            </div>
-
-            <AuditLogsClient initialLogs={logs || []} />
-        </div>
-    );
+    return <AuditLogsClient initialLogs={logs || []} />;
 }

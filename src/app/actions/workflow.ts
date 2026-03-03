@@ -143,6 +143,30 @@ export async function unpublishPage(pageId: string) {
     return { success: true };
 }
 
+export async function schedulePage(pageId: string, scheduledDate: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Unauthorized");
+
+    // We can allow scheduling for pages in draft or review
+    const { error } = await supabase
+        .from('landing_pages')
+        .update({ scheduled_for: scheduledDate, status: 'review' }) // Auto-submit to review if scheduled
+        .eq('id', pageId);
+
+    if (error) {
+        console.error("Schedule error:", error);
+        throw new Error("Failed to schedule page publication");
+    }
+
+    await logAuditAction(supabase, user.id, 'schedule_publish', 'page', pageId, { scheduled_for: scheduledDate });
+
+    revalidatePath(`/pages/${pageId}/edit`);
+    revalidatePath(`/pages`);
+
+    return { success: true };
+}
+
 export async function restoreVersion(pageId: string, versionId: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

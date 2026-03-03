@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { formatTypeLabel } from '@/lib/utils';
-import { GripVertical, Save, Eye, CheckCircle2, CircleDashed, LayoutTemplate, Send, CheckSquare, XCircle, RotateCcw, History, Settings } from 'lucide-react';
+import { GripVertical, Save, Eye, CheckCircle2, CircleDashed, LayoutTemplate, Send, CheckSquare, XCircle, RotateCcw, History, Settings, CalendarClock } from 'lucide-react';
 import { SectionFormRegistry } from '@/components/admin/forms';
-import { submitForReview, publishPage, rejectPage, unpublishPage } from '@/app/actions/workflow';
+import { submitForReview, publishPage, rejectPage, unpublishPage, schedulePage } from '@/app/actions/workflow';
 
 export default function EditorClient({ initialPage, initialSections }: { initialPage: any, initialSections: any[] }) {
     const router = useRouter();
@@ -129,11 +129,18 @@ export default function EditorClient({ initialPage, initialSections }: { initial
                         {page.title}
                     </h1>
                     <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                        <span className={`px-2 py-0.5 rounded-full border text-xs capitalize ${page.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800'
+                        <span className={`px-2 py-0.5 rounded-full border text-xs capitalize ${page.status === 'published' ? 'bg-green-100 text-green-800' :
+                                page.scheduled_for ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                                    'bg-slate-100 text-slate-800'
                             }`}>
-                            {page.status}
+                            {page.scheduled_for ? 'Scheduled' : page.status}
                         </span>
                         <span className="font-mono text-xs">/lp/{page.slug}</span>
+                        {page.scheduled_for && (
+                            <span className="text-xs text-purple-600 bg-purple-50 px-2 py-0.5 rounded border border-purple-100 ml-2">
+                                For: {new Date(page.scheduled_for).toLocaleString()}
+                            </span>
+                        )}
                     </div>
                 </div>
 
@@ -160,9 +167,27 @@ export default function EditorClient({ initialPage, initialSections }: { initial
                     <div className="h-8 w-px bg-slate-200 mx-1"></div>
 
                     {page.status === 'draft' && (
-                        <Button variant="secondary" onClick={() => handleWorkflowAction('submit')} disabled={isPending || isSaving}>
-                            <Send className="mr-2 h-4 w-4" /> Submit for Review
-                        </Button>
+                        <>
+                            <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50" onClick={() => {
+                                const rawDate = prompt("Enter publish date/time (YYYY-MM-DD HH:MM):", new Date(Date.now() + 86400000).toISOString().slice(0, 16).replace('T', ' '));
+                                if (!rawDate) return;
+                                const scheduledDate = new Date(rawDate).toISOString();
+                                startTransition(async () => {
+                                    try {
+                                        await schedulePage(page.id, scheduledDate);
+                                        setPage({ ...page, scheduled_for: scheduledDate, status: 'review' });
+                                        alert("Page successfully scheduled!");
+                                    } catch (e) {
+                                        alert("Failed to schedule page.");
+                                    }
+                                });
+                            }} disabled={isPending || isSaving}>
+                                <CalendarClock className="mr-2 h-4 w-4" /> Schedule
+                            </Button>
+                            <Button variant="secondary" onClick={() => handleWorkflowAction('submit')} disabled={isPending || isSaving}>
+                                <Send className="mr-2 h-4 w-4" /> Submit for Review
+                            </Button>
+                        </>
                     )}
 
                     {page.status === 'review' && (
