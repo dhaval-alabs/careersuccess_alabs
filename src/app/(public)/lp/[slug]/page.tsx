@@ -43,8 +43,7 @@ export default async function LandingPage({ params, searchParams }: { params: Pr
         .from('page_sections')
         .select('*')
         .eq('page_id', page.id)
-        .order('display_order', { ascending: true }) // Changed from order_index to display_order to match CMS
-        .order('order_index', { ascending: true }); // Fallback
+        .order('order_index', { ascending: true });
 
     if (!isPreview) {
         sectionsQuery = sectionsQuery.eq('is_visible', true);
