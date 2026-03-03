@@ -4,13 +4,27 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { formatTypeLabel } from '@/lib/utils';
-import { History, ArrowLeft, RotateCcw } from 'lucide-react';
+import { History, ArrowLeft, RotateCcw, GitCompare } from 'lucide-react';
 import { restoreVersion } from '@/app/actions/workflow';
+import { createClient } from '@/utils/supabase/client';
+import { DiffViewer } from '@/components/admin/DiffViewer';
 
 export default function VersionsClient({ page, versions }: { page: any, versions: any[] }) {
     const router = useRouter();
     const [selectedVersionId, setSelectedVersionId] = useState<string | null>(versions.length > 0 ? versions[0].id : null);
     const [isPending, startTransition] = useTransition();
+    const [compareMode, setCompareMode] = useState(false);
+    const [currentSections, setCurrentSections] = useState<any[]>([]);
+
+    // Fetch current sections once so we have something to diff against
+    useState(() => {
+        const fetchSections = async () => {
+            const supabase = createClient();
+            const { data } = await supabase.from('page_sections').select('*').eq('page_id', page.id).order('display_order');
+            if (data) setCurrentSections(data);
+        };
+        fetchSections();
+    });
 
     const selectedVersion = versions.find(v => v.id === selectedVersionId);
 
@@ -96,34 +110,98 @@ export default function VersionsClient({ page, versions }: { page: any, versions
                                         Published on {new Date(selectedVersion.published_at).toLocaleString()} by {selectedVersion.published_by?.email}
                                     </p>
                                 </div>
-                                <Button onClick={handleRestore} disabled={isPending} className="bg-amber-600 hover:bg-amber-700">
-                                    <RotateCcw className="mr-2 h-4 w-4" /> Restore this version
-                                </Button>
+                                <div className="flex items-center gap-3">
+                                    <Button
+                                        variant={compareMode ? "default" : "outline"}
+                                        onClick={() => setCompareMode(!compareMode)}
+                                        className={compareMode ? "bg-slate-800" : ""}
+                                    >
+                                        <GitCompare className="mr-2 h-4 w-4" />
+                                        {compareMode ? "Viewing Differences" : "Compare with Current"}
+                                    </Button>
+                                    <Button onClick={handleRestore} disabled={isPending} className="bg-amber-600 hover:bg-amber-700">
+                                        <RotateCcw className="mr-2 h-4 w-4" /> Restore this version
+                                    </Button>
+                                </div>
                             </div>
 
                             <div className="bg-white p-6 rounded-xl border shadow-sm">
                                 <h3 className="font-semibold text-lg mb-4">Page Metadata Snapshot</h3>
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                    <div><span className="text-slate-500">Title:</span> {selectedVersion.snapshot.page?.title}</div>
-                                    <div><span className="text-slate-500">Slug:</span> /{selectedVersion.snapshot.page?.slug}</div>
-                                    <div><span className="text-slate-500">Campaign Tag:</span> {selectedVersion.snapshot.page?.campaign_tag || 'None'}</div>
-                                    <div><span className="text-slate-500">Course Name:</span> {selectedVersion.snapshot.page?.course_name || 'None'}</div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    {compareMode ? (
+                                        <>
+                                            <div className="col-span-full mb-2">
+                                                <div className="font-medium text-slate-700 mb-1">Title</div>
+                                                <DiffViewer oldString={selectedVersion.snapshot.page?.title} newString={page.title} type="words" />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <div className="font-medium text-slate-700 mb-1">Slug</div>
+                                                <DiffViewer oldString={selectedVersion.snapshot.page?.slug} newString={page.slug} type="words" />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <div className="font-medium text-slate-700 mb-1">Campaign Tag</div>
+                                                <DiffViewer oldString={selectedVersion.snapshot.page?.campaign_tag} newString={page.campaign_tag} type="words" />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <div className="font-medium text-slate-700 mb-1">Meta Title</div>
+                                                <DiffViewer oldString={selectedVersion.snapshot.page?.meta_title} newString={page.meta_title} type="words" />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <div className="font-medium text-slate-700 mb-1">Course Name</div>
+                                                <DiffViewer oldString={selectedVersion.snapshot.page?.course_name} newString={page.course_name} type="words" />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div><span className="text-slate-500">Title:</span> {selectedVersion.snapshot.page?.title}</div>
+                                            <div><span className="text-slate-500">Slug:</span> /{selectedVersion.snapshot.page?.slug}</div>
+                                            <div><span className="text-slate-500">Campaign Tag:</span> {selectedVersion.snapshot.page?.campaign_tag || 'None'}</div>
+                                            <div><span className="text-slate-500">Course Name:</span> {selectedVersion.snapshot.page?.course_name || 'None'}</div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="bg-white p-6 rounded-xl border shadow-sm">
                                 <h3 className="font-semibold text-lg mb-4">Sections Snapshot ({selectedVersion.snapshot.sections?.length || 0})</h3>
-                                <div className="space-y-2">
-                                    {(selectedVersion.snapshot.sections || []).map((section: any, idx: number) => (
-                                        <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-md border">
-                                            <div className="font-medium text-sm">
-                                                {idx + 1}. {formatTypeLabel(section.type)}
+                                <div className="space-y-4">
+                                    {(selectedVersion.snapshot.sections || []).map((section: any, idx: number) => {
+                                        // If compare mode is on, try to find the matching section in the current live draft by type
+                                        // or by index as a fallback (since IDs might change if they deleted and re-added)
+                                        const matchingCurrent = compareMode
+                                            ? currentSections.find(s => s.id === section.id) || currentSections[idx]
+                                            : null;
+
+                                        return (
+                                            <div key={idx} className="flex flex-col p-4 bg-slate-50/50 rounded-lg border">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="font-medium text-sm text-slate-800">
+                                                        {idx + 1}. {formatTypeLabel(section.type)}
+                                                    </div>
+                                                    <div className="text-xs text-slate-400 font-mono">
+                                                        ID: {section.id.split('-')[0]}
+                                                    </div>
+                                                </div>
+
+                                                {compareMode && matchingCurrent && (
+                                                    <div className="mt-2">
+                                                        <div className="text-xs font-medium text-slate-500 mb-1">Content Changes:</div>
+                                                        <DiffViewer
+                                                            oldString={JSON.stringify(section.content, null, 2)}
+                                                            newString={JSON.stringify(matchingCurrent.content, null, 2)}
+                                                            type="json"
+                                                            className="max-h-[300px] overflow-y-auto"
+                                                        />
+                                                    </div>
+                                                )}
+                                                {compareMode && !matchingCurrent && (
+                                                    <div className="mt-2 p-2 bg-red-50 text-red-600 text-xs border border-red-100 rounded-md">
+                                                        This section no longer exists in the current draft.
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="text-xs text-slate-500 font-mono">
-                                                ID: {section.id.split('-')[0]}...
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
