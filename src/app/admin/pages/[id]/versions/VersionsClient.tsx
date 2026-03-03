@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { formatTypeLabel } from '@/lib/utils';
@@ -15,16 +15,19 @@ export default function VersionsClient({ page, versions }: { page: any, versions
     const [isPending, startTransition] = useTransition();
     const [compareMode, setCompareMode] = useState(false);
     const [currentSections, setCurrentSections] = useState<any[]>([]);
+    const [isLoadingSections, setIsLoadingSections] = useState(true);
 
     // Fetch current sections once so we have something to diff against
-    useState(() => {
+    useEffect(() => {
         const fetchSections = async () => {
+            setIsLoadingSections(true);
             const supabase = createClient();
             const { data } = await supabase.from('page_sections').select('*').eq('page_id', page.id).order('display_order');
             if (data) setCurrentSections(data);
+            setIsLoadingSections(false);
         };
         fetchSections();
-    });
+    }, [page.id]);
 
     const selectedVersion = versions.find(v => v.id === selectedVersionId);
 
