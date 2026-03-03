@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import AuditLogsClient from './AuditLogsClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AuditLogsPage() {
     const supabase = await createClient();
 

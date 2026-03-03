@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const supabase = await createClient();
     const { slug } = await params;

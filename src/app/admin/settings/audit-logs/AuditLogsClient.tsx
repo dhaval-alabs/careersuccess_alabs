@@ -96,7 +96,7 @@ export default function AuditLogsClient({ initialLogs }: { initialLogs: any[] })
                         ) : (
                             filteredLogs.map((log) => (
                                 <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600" suppressHydrationWarning>
                                         {new Date(log.created_at).toLocaleString()}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">

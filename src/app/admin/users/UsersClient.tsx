@@ -99,7 +99,7 @@ export default function UsersClient({ initialUsers, currentUserId }: { initialUs
                                         <div className="font-medium text-slate-900">{u.name || 'No Name'} {u.id === currentUserId && <span className="text-xs font-normal text-slate-400 ml-2">(You)</span>}</div>
                                         <div className="text-xs text-slate-500">{u.email}</div>
                                     </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-slate-500 text-xs">
+                                    <td className="px-4 py-3 whitespace-nowrap text-slate-500 text-xs" suppressHydrationWarning>
                                         {new Date(u.created_at).toLocaleDateString()}
                                     </td>
                                     <td className="px-4 py-3">
