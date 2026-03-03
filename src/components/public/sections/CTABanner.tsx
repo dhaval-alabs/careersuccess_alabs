@@ -13,7 +13,6 @@ export function CTABanner({
     section_label = "Next Batch Filling Fast",
     headline = "The Best Time to Start Was Yesterday.\nThe Second Best Is Now.",
     description = "Every week you wait is a week a competitor gets ahead. Join the analysts who chose to build skills that compound — and careers that last.",
-    cta_primary = { label: "Reserve My Spot ↗", url: "https://www.analytixlabs.co.in" },
     cta_secondary = { label: "Download the Syllabus", url: "https://www.analytixlabs.co.in" }
 }: CTABannerProps) {
     return (

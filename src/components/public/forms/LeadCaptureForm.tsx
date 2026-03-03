@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FormEvent, useRef, useState, useEffect } from 'react';
+import React, { FormEvent, useRef, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useLeadTracker } from '@/hooks/useLeadTracker';
 
