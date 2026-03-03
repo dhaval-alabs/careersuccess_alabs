@@ -1,5 +1,7 @@
-import React from 'react';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import LeadCaptureForm from '@/components/forms/LeadCaptureForm';
+import { AnalyticsTracker } from '@/components/public/AnalyticsTracker';
 
 export default function Home() {
   return (
@@ -15,34 +17,47 @@ export default function Home() {
       <div className="holo-shimmer"></div>
 
       {/* Main Content Center */}
-      <div className="relative flex-grow flex flex-col items-center justify-center z-10 w-full max-w-4xl mx-auto px-[5%] text-center fade-up pt-16 pb-8">
-
-        {/* Logo / Brand */}
-        <div className="mb-12 inline-block">
-          <h1 className="text-[2.5rem] font-sora font-extrabold tracking-tighter text-[var(--navy)] flex items-center gap-3">
-            <div className="w-[40px] h-[40px] rounded-xl bg-[var(--grad)] font-sora text-white flex items-center justify-center text-xl shadow-[0_8px_16px_rgba(0,217,126,0.3)]">
-              AL
+      <div className="relative flex-grow flex flex-col items-center justify-center z-10 w-full max-w-6xl mx-auto px-6 fade-up pt-16 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+          {/* Left Side: Copy */}
+          <div className="text-left">
+            {/* Logo / Brand */}
+            <div className="mb-8 inline-block">
+              <h1 className="text-2xl font-sora font-extrabold tracking-tighter text-[var(--navy)] flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[var(--grad)] font-sora text-white flex items-center justify-center text-lg shadow-lg">
+                  AL
+                </div>
+                AnalytixLabs
+              </h1>
             </div>
-            AnalytixLabs
-          </h1>
-        </div>
 
-        {/* Message */}
-        <h2 className="font-sora text-[clamp(2.5rem,5vw,4.5rem)] font-extrabold text-[var(--navy)] leading-[1.1] tracking-tight mb-8">
-          The best time to <span className="text-gradient">invest in your career</span> is right now.
-        </h2>
+            {/* Message */}
+            <h2 className="font-sora text-[clamp(2rem,4vw,3.5rem)] font-extrabold text-[var(--navy)] leading-tight tracking-tight mb-6">
+              The best time to <span className="text-gradient">invest in your career</span> is right now.
+            </h2>
 
-        <p className="text-[var(--muted)] text-[clamp(1.1rem,2vw,1.3rem)] leading-[1.7] max-w-2xl mx-auto mb-12">
-          The job market is evolving faster than ever. Equip yourself with the data, analytics, and AI skills that companies are desperately looking for today. Future-proof your trajectory.
-        </p>
+            <p className="text-[var(--muted)] text-lg leading-relaxed mb-8 max-w-xl">
+              Equip yourself with the data, analytics, and AI skills that companies are desperately looking for today. Future-proof your trajectory with Nasscom-certified programs.
+            </p>
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-          <Link href="/lp/business-analytics-ncr" className="btn-primary-custom text-[1.05rem] py-4 px-8 w-full sm:w-auto text-center">
-            Explore Offers ↗
-          </Link>
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-4">
+              <Link href="/lp/business-analytics-ncr" className="btn-primary-custom text-base py-3 px-8 text-center">
+                Explore Offers ↗
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Side: Form */}
+          <div className="w-full max-w-md mx-auto lg:mr-0 animate-in slide-in-from-right duration-700">
+            <LeadCaptureForm />
+          </div>
         </div>
       </div>
+
+      <Suspense fallback={null}>
+        <AnalyticsTracker pageId="home" />
+      </Suspense>
 
       {/* Footer info (Sticky at the bottom without overlapping) */}
       <div className="relative z-10 w-full text-center text-[var(--muted-light)] text-sm px-6 py-6 mt-auto">

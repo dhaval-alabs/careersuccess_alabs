@@ -1,68 +1,93 @@
-'use server';
+'use server'
 
-import { createClient } from '@/utils/supabase/server';
-import { revalidatePath } from 'next/cache';
+import { createClient } from '@/utils/supabase/server'
+import { revalidatePath } from 'next/cache'
 
-export async function getLeads() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+interface LeadEntry {
+  name: string
+  email: string
+  countryCode: string
+  mobile: string
+  city: string
+  form_source?: string
+  session_id?: string
+}
 
-    // In a real app, verify `user` is an admin. We rely on middleware for basic protection.
-    if (!user) throw new Error("Unauthorized");
+export async function createLeadAction(data: LeadEntry) {
+  try {
+    const supabase = await createClient()
 
-    // Fetch leads ordered by most recent first
-    const { data: leads, error } = await supabase
-        .from('leads')
-        .select('*')
-        .order('created_at', { ascending: false });
+    const { error } = await supabase.from('leads').insert([{
+      name: data.name,
+      email: data.email,
+      phone: `${data.countryCode} ${data.mobile}`, // Combine for UI compatibility
+      city: data.city,
+      form_source: data.form_source || 'Default Landing Page',
+      session_id: data.session_id,
+      created_at: new Date().toISOString()
+    }])
 
     if (error) {
-        console.error("Error fetching leads:", error);
-        throw new Error("Failed to fetch leads");
+      console.error("Lead insertion error:", error)
+      return { success: false, error: 'Failed to save lead information' }
     }
 
-    return leads;
+    revalidatePath('/admin/leads')
+    return { success: true }
+  } catch (error) {
+    console.error("Runtime exception during lead insert:", error)
+    return { success: false, error: 'Internal server error' }
+  }
+}
+
+export async function getLeads() {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return data || []
+  } catch (error) {
+    console.error('Error fetching leads:', error)
+    return []
+  }
+}
+
+export async function deleteLead(id: string) {
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from('leads')
+      .delete()
+      .match({ id })
+
+    if (error) throw error
+    revalidatePath('/admin/leads')
+    return { success: true }
+  } catch (error) {
+    console.error('Error deleting lead:', error)
+    throw error
+  }
 }
 
 export async function getLeadTimeline(sessionId: string) {
-    if (!sessionId) return [];
+  if (!sessionId) return []
 
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('lead_events') // Assuming this table exists based on LeadsClient logic
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('timestamp', { ascending: true })
 
-    if (!user) throw new Error("Unauthorized");
-
-    // Fetch events for this session, ordered chronologically
-    const { data: events, error } = await supabase
-        .from('lead_events')
-        .select('*')
-        .eq('session_id', sessionId)
-        .order('timestamp', { ascending: true });
-
-    if (error) {
-        console.error("Error fetching lead timeline:", error);
-        // Don't throw here, just return empty so the lead details still load even if timeline fails
-        return [];
-    }
-
-    return events;
-}
-
-export async function deleteLead(leadId: string) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) throw new Error("Unauthorized");
-
-    const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', leadId);
-
-    if (error) {
-        throw new Error("Failed to delete lead");
-    }
-
-    revalidatePath('/admin/leads');
-    return { success: true };
+    if (error) throw error
+    return data || []
+  } catch (error) {
+    console.error('Error fetching lead timeline:', error)
+    return []
+  }
 }

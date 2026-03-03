@@ -70,7 +70,7 @@ export function useLeadTracker() {
                         try {
                             await supabase.from('lead_events').insert({
                                 session_id: sessionId,
-                                event_type: 'view_section',
+                                event_type: 'section_view',
                                 element_id: elementId,
                                 page_url: window.location.href,
                                 referrer: document.referrer || null
