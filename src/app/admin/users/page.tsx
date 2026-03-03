@@ -15,7 +15,7 @@ export default async function UsersPage() {
         .single();
 
     if (profile?.role !== 'super_admin') {
-        redirect('/'); // Redirect non-admins to dashboard
+        redirect('/admin'); // Redirect non-admins to dashboard
     }
 
     const { data: users, error } = await supabase

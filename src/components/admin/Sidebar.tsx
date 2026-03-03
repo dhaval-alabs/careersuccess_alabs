@@ -15,12 +15,12 @@ export function Sidebar({ className, role = 'editor' }: SidebarProps) {
     const pathname = usePathname();
 
     const routes = [
-        { label: 'Dashboard', icon: LayoutDashboard, href: '/', roles: ['editor', 'publisher', 'super_admin'] },
-        { label: 'Pages', icon: FileText, href: '/pages', roles: ['editor', 'publisher', 'super_admin'] },
-        { label: 'Courses', icon: BookOpen, href: '/courses', roles: ['editor', 'publisher', 'super_admin'] },
-        { label: 'Submissions', icon: Inbox, href: '/inbox', roles: ['editor', 'publisher', 'super_admin'] },
-        { label: 'Users', icon: Users, href: '/users', roles: ['super_admin'] },
-        { label: 'Audit Logs', icon: Settings, href: '/settings/audit-logs', roles: ['super_admin'] },
+        { label: 'Dashboard', icon: LayoutDashboard, href: '/admin', roles: ['editor', 'publisher', 'super_admin'] },
+        { label: 'Pages', icon: FileText, href: '/admin/pages', roles: ['editor', 'publisher', 'super_admin'] },
+        { label: 'Courses', icon: BookOpen, href: '/admin/courses', roles: ['editor', 'publisher', 'super_admin'] },
+        { label: 'Submissions', icon: Inbox, href: '/admin/inbox', roles: ['editor', 'publisher', 'super_admin'] },
+        { label: 'Users', icon: Users, href: '/admin/users', roles: ['super_admin'] },
+        { label: 'Audit Logs', icon: Settings, href: '/admin/settings/audit-logs', roles: ['super_admin'] },
     ];
 
     return (

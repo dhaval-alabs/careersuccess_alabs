@@ -15,7 +15,7 @@ export default async function SettingsPage() {
         .single();
 
     if (profile?.role !== 'super_admin') {
-        redirect('/'); // Redirect non-admins
+        redirect('/admin'); // Redirect non-admins
     }
 
     const { data: settings } = await supabase
