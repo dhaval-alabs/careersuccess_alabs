@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { createLeadAction } from '@/app/actions/leads'
 
 const INDIA_CITIES = [

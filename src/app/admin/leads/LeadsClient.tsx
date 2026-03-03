@@ -1,13 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Download, Search, Trash2, Eye, User, Clock, MapPin, MousePointer2, FileCheck, History } from 'lucide-react';
 import { deleteLead, getLeadTimeline } from '@/app/actions/leads';
 
 export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
-    const router = useRouter();
     const [leads, setLeads] = useState(initialLeads);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSource, setSelectedSource] = useState('all');
@@ -41,7 +39,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         // Build CSV rows
         const rows = filteredLeads.map(lead => [
             new Date(lead.created_at).toLocaleString(),
-            \`"\${lead.name || ''}"\`,
+    \`"\${lead.name || ''}"\`,
             \`"\${lead.email || ''}"\`,
             \`"\${lead.phone || ''}"\`,
             \`"\${lead.form_source || 'Unknown'}"\`,
