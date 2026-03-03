@@ -40,7 +40,7 @@ export default function VersionsClient({ page, versions }: { page: any, versions
             try {
                 await restoreVersion(page.id, selectedVersion.id);
                 alert("Version restored successfully from snapshot.");
-                router.push(`/pages/${page.id}/edit`);
+                router.push(`/admin/pages/${page.id}/edit`);
             } catch (error) {
                 console.error(error);
                 alert("Failed to restore version.");
@@ -52,7 +52,7 @@ export default function VersionsClient({ page, versions }: { page: any, versions
         <div className="flex flex-col h-[calc(100vh-theme(spacing.24))]">
             <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm shrink-0 rounded-t-lg">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="sm" onClick={() => router.push(`/pages/${page.id}/edit`)}>
+                    <Button variant="ghost" size="sm" onClick={() => router.push(`/admin/pages/${page.id}/edit`)}>
                         <ArrowLeft className="h-4 w-4 mr-2" /> Back to Editor
                     </Button>
                     <div>

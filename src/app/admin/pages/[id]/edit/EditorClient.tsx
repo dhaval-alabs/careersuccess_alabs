@@ -130,8 +130,8 @@ export default function EditorClient({ initialPage, initialSections }: { initial
                     </h1>
                     <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
                         <span className={`px-2 py-0.5 rounded-full border text-xs capitalize ${page.status === 'published' ? 'bg-green-100 text-green-800' :
-                                page.scheduled_for ? 'bg-purple-100 text-purple-800 border-purple-200' :
-                                    'bg-slate-100 text-slate-800'
+                            page.scheduled_for ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                                'bg-slate-100 text-slate-800'
                             }`}>
                             {page.scheduled_for ? 'Scheduled' : page.status}
                         </span>
@@ -153,7 +153,7 @@ export default function EditorClient({ initialPage, initialSections }: { initial
                         ) : null}
                     </div>
 
-                    <Button variant="outline" onClick={() => router.push(`/pages/${page.id}/versions`)}>
+                    <Button variant="outline" onClick={() => router.push(`/admin/pages/${page.id}/versions`)}>
                         <History className="mr-2 h-4 w-4" /> History
                     </Button>
                     <Button variant="outline" onClick={() => window.open(`/lp/${page.slug}?preview=true`, '_blank')} disabled={isPending || (page.status === 'published' && !lastSaved)}>

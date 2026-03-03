@@ -90,8 +90,8 @@ export async function GET(request: Request) {
             });
 
             // Revalidate frontend
-            revalidatePath(`/pages/${page.id}/edit`);
-            revalidatePath(`/pages`);
+            revalidatePath(`/admin/pages/${page.id}/edit`);
+            revalidatePath(`/admin/pages`);
             revalidatePath(`/lp/${page.slug}`);
         }
 

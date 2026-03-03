@@ -16,7 +16,12 @@ const COUNTRY_CODES = [
   { code: "+61", label: "+61 (AUS)" },
 ];
 
-export default function LeadCaptureForm() {
+interface LeadCaptureFormProps {
+  sourceName?: string;
+  buttonText?: string;
+}
+
+export default function LeadCaptureForm({ sourceName = 'Hero Section', buttonText = 'Secure My Spot ↗' }: LeadCaptureFormProps) {
   const [isPending, startTransition] = useTransition();
   const [formState, setFormState] = useState({
     success: false,
@@ -36,7 +41,7 @@ export default function LeadCaptureForm() {
       countryCode: formData.get('countryCode') as string,
       mobile: formData.get('mobile') as string,
       city: formData.get('city') as string,
-      form_source: 'Landing Page Hero', // Attribution
+      form_source: sourceName, // Attribution
       session_id: typeof window !== 'undefined' ? sessionStorage.getItem('alabs_session_id') || undefined : undefined
     }
 
@@ -110,9 +115,10 @@ export default function LeadCaptureForm() {
                 name="city"
                 id="city"
                 required
+                defaultValue=""
                 className="w-full px-4 py-3 border border-slate-200 bg-slate-50/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:bg-white transition-all appearance-none cursor-pointer"
               >
-                <option value="" disabled selected>Select City...</option>
+                <option value="" disabled>Select City...</option>
                 {INDIA_CITIES.sort().map(city => (
                   <option key={city} value={city}>{city}</option>
                 ))}
@@ -157,7 +163,7 @@ export default function LeadCaptureForm() {
             disabled={isPending}
             className="mt-4 w-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--navy)] font-bold py-4 px-4 rounded-xl shadow-[0_8px_20px_rgba(0,217,126,0.3)] hover:shadow-[0_12px_24px_rgba(0,217,126,0.4)] hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm"
           >
-            {isPending ? 'Processing...' : 'Secure My Spot ↗'}
+            {isPending ? 'Processing...' : buttonText}
           </button>
 
           <p className="text-[10px] text-center text-slate-400 mt-2 px-6">

@@ -1,5 +1,4 @@
-import React from 'react';
-import { LeadCaptureForm } from '@/components/public/forms/LeadCaptureForm';
+import LeadCaptureForm from '@/components/forms/LeadCaptureForm';
 
 export interface CTABannerProps {
     section_label?: string;

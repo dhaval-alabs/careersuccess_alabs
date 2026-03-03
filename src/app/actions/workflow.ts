@@ -21,8 +21,8 @@ export async function submitForReview(pageId: string) {
 
     await logAuditAction(supabase, user.id, 'submit_review', 'page', pageId);
 
-    revalidatePath(`/pages/${pageId}/edit`);
-    revalidatePath(`/pages`);
+    revalidatePath(`/admin/pages/${pageId}/edit`);
+    revalidatePath(`/admin/pages`);
     return { success: true };
 }
 
@@ -145,8 +145,8 @@ export async function schedulePage(pageId: string, scheduledDate: string) {
 
     await logAuditAction(supabase, user.id, 'schedule_publish', 'page', pageId, { scheduled_for: scheduledDate });
 
-    revalidatePath(`/pages/${pageId}/edit`);
-    revalidatePath(`/pages`);
+    revalidatePath(`/admin/pages/${pageId}/edit`);
+    revalidatePath(`/admin/pages`);
 
     return { success: true };
 }
@@ -216,9 +216,9 @@ export async function restoreVersion(pageId: string, versionId: string) {
 
     await logAuditAction(supabase, user.id, 'restore_version', 'page', pageId, { restored_version: version.version_number });
 
-    revalidatePath(`/pages/${pageId}/edit`);
-    revalidatePath(`/pages/${pageId}/versions`);
-    revalidatePath(`/pages`);
+    revalidatePath(`/admin/pages/${pageId}/edit`);
+    revalidatePath(`/admin/pages/${pageId}/versions`);
+    revalidatePath(`/admin/pages`);
 
     return { success: true };
 }

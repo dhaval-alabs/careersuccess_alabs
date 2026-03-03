@@ -1,5 +1,4 @@
-import React from 'react';
-import { LeadCaptureForm } from '@/components/public/forms/LeadCaptureForm';
+import LeadCaptureForm from '@/components/forms/LeadCaptureForm';
 
 export interface HeroBannerProps {
     badge_text?: string;
@@ -74,11 +73,11 @@ export function HeroBanner({
                 </div>
             </div>
 
-            <div className="relative fade-up delay-600 z-10 hidden lg:block">
+            <div className="relative fade-up delay-600 z-10 w-full">
                 {/* Form glow effect */}
                 <div className="absolute inset-0 bg-[var(--teal)]/20 blur-[100px] rounded-full pointer-events-none"></div>
 
-                <LeadCaptureForm sourceName="hero_banner" buttonText={form?.submit_label || "Apply Now"} />
+                <LeadCaptureForm sourceName="Landing Page Hero" buttonText={form?.submit_label || "Apply Now"} />
             </div>
         </section>
     );
