@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import { createClient } from '@/utils/supabase/server';
 import { HeroBanner } from '@/components/public/sections/HeroBanner';
 import { TrustStrip } from '@/components/public/sections/TrustStrip';
@@ -79,11 +80,13 @@ export default async function LandingPage({ params, searchParams }: { params: Pr
 
     return (
         <main className="min-h-screen relative font-sans">
-            <AnalyticsTracker
-                ga4Id={page.ga4_measurement_id || settings?.default_ga4_id}
-                metaPixelId={page.meta_pixel_id || settings?.default_pixel_id}
-                pageId={page.id}
-            />
+            <Suspense fallback={null}>
+                <AnalyticsTracker
+                    ga4Id={page.ga4_measurement_id || settings?.default_ga4_id}
+                    metaPixelId={page.meta_pixel_id || settings?.default_pixel_id}
+                    pageId={page.id}
+                />
+            </Suspense>
             {sections?.map((section) => {
                 const Component = sectionComponents[section.type];
                 if (!Component) return null;
