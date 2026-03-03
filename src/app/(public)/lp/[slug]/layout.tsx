@@ -1,13 +1,14 @@
 import { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/server';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const supabase = await createClient();
+    const { slug } = await params;
 
     const { data: page } = await supabase
         .from('landing_pages')
         .select('meta_title, meta_description, og_image_url')
-        .eq('slug', params.slug)
+        .eq('slug', slug)
         .single();
 
     if (!page) {

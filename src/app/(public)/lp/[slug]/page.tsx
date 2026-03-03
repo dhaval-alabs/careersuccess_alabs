@@ -16,15 +16,17 @@ import { AnalyticsTracker } from '@/components/public/AnalyticsTracker';
 // Revalidate this page every 60 seconds (ISR)
 export const revalidate = 60;
 
-export default async function LandingPage({ params, searchParams }: { params: { slug: string }, searchParams: { preview?: string } }) {
+export default async function LandingPage({ params, searchParams }: { params: Promise<{ slug: string }>, searchParams: Promise<{ preview?: string }> }) {
     const supabase = await createClient();
-    const isPreview = searchParams.preview === 'true';
+    const { slug } = await params;
+    const resolvedSearchParams = await searchParams;
+    const isPreview = resolvedSearchParams.preview === 'true';
 
     // 1. Fetch the page by slug (allow unpublished if preview=true)
     let pageQuery = supabase
         .from('landing_pages')
         .select('*')
-        .eq('slug', params.slug);
+        .eq('slug', slug);
 
     if (!isPreview) {
         pageQuery = pageQuery.eq('status', 'published');
