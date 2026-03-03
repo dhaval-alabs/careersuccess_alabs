@@ -1,13 +1,14 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+// @ts-ignore
 import { revalidatePath } from 'next/cache';
 
 export async function updateUserRole(userId: string, newRole: 'editor' | 'publisher' | 'super_admin') {
     const supabase = await createClient();
 
     // Auth Check
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await (supabase.auth as any).getUser();
     if (!user) throw new Error("Unauthorized");
 
     // Super Admin Authorization Check

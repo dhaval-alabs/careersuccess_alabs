@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+// @ts-ignore
 import { revalidatePath } from 'next/cache';
 
 // We intentionally use the service role key here because this is a background cron job

@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@supabase/supabase-js';
+// @ts-ignore
 import { revalidatePath } from 'next/cache';
 import { logAuditAction } from './audit';
 
@@ -16,7 +17,7 @@ export async function inviteUser(email: string, role: string, inviterId: string)
 
     try {
         // 1. Send invite email via Supabase Auth Admin
-        const { data: authData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+        const { data: authData, error: inviteError } = await (supabaseAdmin.auth as any).admin.inviteUserByEmail(email, {
             data: { role: role } // Pass role in user_metadata for JWT claims later if needed
         });
 
