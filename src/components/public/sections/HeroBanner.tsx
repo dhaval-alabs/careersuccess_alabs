@@ -1,4 +1,3 @@
-import LeadCaptureForm from '@/components/forms/LeadCaptureForm';
 
 export interface HeroBannerProps {
     badge_text?: string;
@@ -73,11 +72,9 @@ export function HeroBanner({
                 </div>
             </div>
 
-            <div className="relative fade-up delay-600 z-10 w-full">
-                {/* Form glow effect */}
-                <div className="absolute inset-0 bg-[var(--teal)]/20 blur-[100px] rounded-full pointer-events-none"></div>
-
-                <LeadCaptureForm sourceName="Landing Page Hero" buttonText={form?.submit_label || "Apply Now"} />
+            <div className="relative fade-up delay-600 z-10 w-full hidden lg:block">
+                {/* Form glow effect placeholder since form moved to FAQ */}
+                <div className="absolute inset-0 bg-[var(--teal)]/10 blur-[100px] rounded-full pointer-events-none"></div>
             </div>
         </section>
     );

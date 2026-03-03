@@ -158,17 +158,32 @@ export default function LeadCaptureForm({ sourceName = 'Hero Section', buttonTex
             </div>
           </div>
 
+          {/* Consent Checkbox */}
+          <div className="mt-2 flex items-start gap-3 px-2">
+            <div className="flex items-center h-5 mt-0.5">
+              <input
+                id="consent"
+                name="consent"
+                type="checkbox"
+                required
+                className="w-4 h-4 border border-slate-300 rounded bg-slate-50 focus:ring-2 focus:ring-[#1A4A8F] cursor-pointer"
+              />
+            </div>
+            <div className="text-xs text-slate-500 leading-tight">
+              <label htmlFor="consent" className="cursor-pointer">
+                I agree to the <a href="/privacy-policy" className="text-[#1A4A8F] underline hover:text-[#00D97E]">Privacy Policy</a> and consent to being contacted by AnalytixLabs regarding my career inquiry.
+              </label>
+              <span className="block mt-1 font-medium text-slate-400">No Spam ❤️ We promise.</span>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={isPending}
-            className="mt-4 w-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--navy)] font-bold py-4 px-4 rounded-xl shadow-[0_8px_20px_rgba(0,217,126,0.3)] hover:shadow-[0_12px_24px_rgba(0,217,126,0.4)] hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm"
+            className="mt-2 w-full btn-primary-custom !py-4 uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isPending ? 'Processing...' : buttonText}
           </button>
-
-          <p className="text-[10px] text-center text-slate-400 mt-2 px-6">
-            By clicking "Secure My Spot", you agree to our Terms of Use and Privacy Policy.
-          </p>
         </form>
       )}
     </div>
