@@ -1,4 +1,5 @@
 import React from 'react';
+import { LeadCaptureForm } from '@/components/public/forms/LeadCaptureForm';
 
 export interface HeroBannerProps {
     badge_text?: string;
@@ -29,7 +30,7 @@ export function HeroBanner({
     form
 }: HeroBannerProps) {
     return (
-        <section data-track-section={`hero_banner`} className="min-h-screen pt-[130px] pb-[100px] px-[5%] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center relative z-10">
+        <section data-track-section={`hero_banner`} className="min-h-screen pt-[130px] pb-[100px] px-[5%] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-14 items-center relative z-10">
             <div className="hero-content">
                 {badge_text && (
                     <div className="inline-flex items-center gap-2 bg-[rgba(110,218,253,0.1)] border border-[rgba(0,217,126,0.35)] text-[#1A4A8F] text-[0.73rem] font-bold tracking-[0.1em] uppercase py-1.5 px-4 rounded-full mb-7 fade-up">
@@ -73,65 +74,11 @@ export function HeroBanner({
                 </div>
             </div>
 
-            <div className="hero-card-wrap hidden lg:block fade-up delay-300">
-                <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-[24px] p-8 backdrop-blur-[24px] shadow-[0_24px_80px_rgba(0,217,126,0.1),inset_0_2px_0_rgba(110,218,253,0.3),inset_0_0_0_1px_rgba(255,255,255,0.8)] relative overflow-hidden">
-                    {/* Holographic gloss */}
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-[var(--grad)] rounded-t-[24px]"></div>
+            <div className="relative fade-up delay-600 z-10 hidden lg:block">
+                {/* Form glow effect */}
+                <div className="absolute inset-0 bg-[var(--teal)]/20 blur-[100px] rounded-full pointer-events-none"></div>
 
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="font-sora font-bold text-[1rem] text-[var(--navy)]">What You'll Walk Away With</div>
-                        <div className="bg-[var(--grad)] text-[var(--navy)] font-sora font-bold text-[0.82rem] py-1.5 px-3.5 rounded-full">From ₹52,000</div>
-                    </div>
-
-                    <div className="flex gap-1.5 mb-6">
-                        <div className="flex-1 p-[0.55rem] rounded-lg text-[0.78rem] font-semibold text-center cursor-pointer transition-all bg-[var(--grad)] text-[var(--navy)]">Core Analytics</div>
-                        <div className="flex-1 p-[0.55rem] rounded-lg text-[0.78rem] font-semibold text-center cursor-pointer transition-all border border-[var(--border)] text-[var(--muted)]">+ AI Track</div>
-                    </div>
-
-                    <div className="flex flex-col gap-2.5">
-                        <div className="flex items-start gap-3 p-3 bg-[rgba(110,218,253,0.05)] rounded-xl border border-[rgba(110,218,253,0.12)] hover:bg-[rgba(0,217,126,0.07)] hover:border-[rgba(0,217,126,0.2)] transition-all">
-                            <div className="w-[34px] h-[34px] bg-[var(--grad-soft)] rounded-md flex items-center justify-center text-[1rem] shrink-0">📊</div>
-                            <div className="text-[var(--muted)] text-[0.85rem] leading-[1.6]">
-                                <strong className="text-[var(--navy)] block font-semibold text-[0.875rem] mb-[0.1rem]">Excel, SQL & Power BI — Actually Mastered</strong>
-                                Built, tested, and presented to real business problems.
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-[rgba(110,218,253,0.05)] rounded-xl border border-[rgba(110,218,253,0.12)] hover:bg-[rgba(0,217,126,0.07)] hover:border-[rgba(0,217,126,0.2)] transition-all">
-                            <div className="w-[34px] h-[34px] bg-[var(--grad-soft)] rounded-md flex items-center justify-center text-[1rem] shrink-0">🐍</div>
-                            <div className="text-[var(--muted)] text-[0.85rem] leading-[1.6]">
-                                <strong className="text-[var(--navy)] block font-semibold text-[0.875rem] mb-[0.1rem]">Python That Does Real Work</strong>
-                                Clean data, build predictive models, automate workflows.
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-[rgba(110,218,253,0.05)] rounded-xl border border-[rgba(110,218,253,0.12)] hover:bg-[rgba(0,217,126,0.07)] hover:border-[rgba(0,217,126,0.2)] transition-all">
-                            <div className="w-[34px] h-[34px] bg-[var(--grad-soft)] rounded-md flex items-center justify-center text-[1rem] shrink-0">🤖</div>
-                            <div className="text-[var(--muted)] text-[0.85rem] leading-[1.6]">
-                                <strong className="text-[var(--navy)] block font-semibold text-[0.875rem] mb-[0.1rem]">AI Agents You Actually Deploy</strong>
-                                LangChain, CrewAI, AutoGen — systems that work around the clock.
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-[rgba(110,218,253,0.05)] rounded-xl border border-[rgba(110,218,253,0.12)] hover:bg-[rgba(0,217,126,0.07)] hover:border-[rgba(0,217,126,0.2)] transition-all">
-                            <div className="w-[34px] h-[34px] bg-[var(--grad-soft)] rounded-md flex items-center justify-center text-[1rem] shrink-0">🚀</div>
-                            <div className="text-[var(--muted)] text-[0.85rem] leading-[1.6]">
-                                <strong className="text-[var(--navy)] block font-semibold text-[0.875rem] mb-[0.1rem]">A Portfolio That Gets You Hired</strong>
-                                Real capstone projects in banking, retail, healthcare, telecom.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-6 pt-5 border-t border-[rgba(110,218,253,0.15)] flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-[var(--muted)] text-[0.73rem]">
-                            <div className="w-[28px] h-[28px] bg-[rgba(247,201,72,0.12)] rounded-md flex items-center justify-center text-[0.85rem]">🛡️</div>
-                            <div>Nasscom-FutureSkills<br />Prime Certified</div>
-                        </div>
-                        {form?.submit_label ? (
-                            <a data-track-click={`hero_card_enroll`} href="#enroll" className="btn-primary-custom !text-[0.82rem] !py-2.5 !px-[1.1rem]">{form.submit_label}</a>
-                        ) : (
-                            <a data-track-click={`hero_card_enroll`} href="#enroll" className="btn-primary-custom !text-[0.82rem] !py-2.5 !px-[1.1rem]">Enroll →</a>
-                        )}
-
-                    </div>
-                </div>
+                <LeadCaptureForm sourceName="hero_banner" buttonText={form?.submit_label || "Apply Now"} />
             </div>
         </section>
     );
