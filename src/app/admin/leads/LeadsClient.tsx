@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Download, Search, Trash2, Eye, User, Clock, MapPin, Pointer, FormInput, History as HistoryIcon } from 'lucide-react';
+import { Download, Search, Trash2, Eye, User, Clock, MapPin, MousePointer2, FileCheck, History } from 'lucide-react';
 import { deleteLead, getLeadTimeline } from '@/app/actions/leads';
 
 export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
@@ -41,11 +41,11 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         // Build CSV rows
         const rows = filteredLeads.map(lead => [
             new Date(lead.created_at).toLocaleString(),
-            `"${lead.name || ''}"`,
-            `"${lead.email || ''}"`,
-            `"${lead.phone || ''}"`,
-            `"${lead.form_source || 'Unknown'}"`,
-            `"${lead.session_id || ''}"`
+            \`"\${lead.name || ''}"\`,
+            \`"\${lead.email || ''}"\`,
+            \`"\${lead.phone || ''}"\`,
+            \`"\${lead.form_source || 'Unknown'}"\`,
+            \`"\${lead.session_id || ''}"\`
         ]);
 
         const csvContent = [
@@ -57,14 +57,14 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `leads_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute("download", \`leads_export_\${new Date().toISOString().split('T')[0]}.csv\`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
 
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Are you sure you want to delete the lead for ${name}?`)) return;
+        if (!confirm(\`Are you sure you want to delete the lead for \${name}?\`)) return;
 
         try {
             await deleteLead(id);
@@ -262,27 +262,26 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
                                         <div className="flex justify-center items-center h-full text-sm text-slate-500">Loading timeline events...</div>
                                     ) : timeline.length === 0 ? (
                                         <div className="flex flex-col justify-center items-center h-full text-slate-400 text-sm bg-white border border-dashed rounded-lg p-8">
-                                            <HistoryIcon className="h-8 w-8 mb-2 opacity-30" />
+                                            <History className="h-8 w-8 mb-2 opacity-30" />
                                             <span>No tracking events found for this session.</span>
                                             <span className="text-xs mt-1 text-slate-400/70">The user may have blocked tracking scripts.</span>
                                         </div>
                                     ) : (
                                         <div className="relative border-l-2 border-slate-200 ml-3 space-y-6 pb-6">
-                                            {timeline.map((event, i) => {
+                                            {timeline.map((event) => {
                                                 const isClick = event.event_type === 'click';
                                                 const isSection = event.event_type === 'section_view';
 
                                                 return (
                                                     <div key={event.id} className="relative pl-6">
                                                         {/* Timeline node */}
-                                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center shadow-sm ${isClick ? 'bg-blue-500' : isSection ? 'bg-purple-500' : 'bg-slate-400'
-                                                            }`}></div>
+                                                        <div className={\`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center shadow-sm \${isClick ? 'bg-blue-500' : isSection ? 'bg-purple-500' : 'bg-slate-400'}\`}></div>
 
                                                         {/* Event Card */}
                                                         <div className="bg-white p-3 rounded-lg border shadow-sm flex flex-col gap-1 hover:shadow-md transition-shadow">
                                                             <div className="flex justify-between items-start">
                                                                 <div className="flex items-center gap-1.5 font-medium text-sm text-slate-800">
-                                                                    {isClick && <Pointer className="h-3.5 w-3.5 text-blue-500" />}
+                                                                    {isClick && <MousePointer2 className="h-3.5 w-3.5 text-blue-500" />}
                                                                     {isSection && <Eye className="h-3.5 w-3.5 text-purple-500" />}
                                                                     {isClick ? 'Clicked Element' : isSection ? 'Viewed Section' : event.event_type}
                                                                 </div>
@@ -295,7 +294,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
                                                             </div>
                                                             {event.page_url && (
                                                                 <div className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                                                                    <MapPin className="h-3 w-3" /> {new URL(event.page_url).pathname}
+                                                                    <MapPin className="h-3 w-3" /> {new URL(event.page_url, "https://example.com").pathname}
                                                                 </div>
                                                             )}
                                                         </div>
@@ -306,7 +305,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
                                             {/* Final submission node */}
                                             <div className="relative pl-6 pt-2">
                                                 <div className="absolute -left-[11px] top-4 w-5 h-5 rounded-full border-2 border-white bg-green-500 flex items-center justify-center shadow-sm z-10">
-                                                    <FormInput className="h-3 w-3 text-white" />
+                                                    <FileCheck className="h-3 w-3 text-white" />
                                                 </div>
                                                 <div className="bg-green-50 border-green-200 p-3 rounded-lg border shadow-sm">
                                                     <div className="font-medium text-sm text-green-800">Form Submitted</div>

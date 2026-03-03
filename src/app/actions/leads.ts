@@ -20,7 +20,7 @@ export async function createLeadAction(data: LeadEntry) {
     const { error } = await supabase.from('leads').insert([{
       name: data.name,
       email: data.email,
-      phone: `${data.countryCode} ${data.mobile}`, // Combine for UI compatibility
+      phone: \`\${data.countryCode} \${data.mobile}\`, // Combine for UI compatibility
       city: data.city,
       form_source: data.form_source || 'Default Landing Page',
       session_id: data.session_id,
@@ -32,7 +32,7 @@ export async function createLeadAction(data: LeadEntry) {
       return { success: false, error: 'Failed to save lead information' }
     }
 
-    revalidatePath('/admin/leads')
+    revalidatePath('/admin/leads', 'page')
     return { success: true }
   } catch (error) {
     console.error("Runtime exception during lead insert:", error)
@@ -65,7 +65,7 @@ export async function deleteLead(id: string) {
       .match({ id })
 
     if (error) throw error
-    revalidatePath('/admin/leads')
+    revalidatePath('/admin/leads', 'page')
     return { success: true }
   } catch (error) {
     console.error('Error deleting lead:', error)
@@ -73,7 +73,7 @@ export async function deleteLead(id: string) {
   }
 }
 
-export async function getLeadTimeline(sessionId: string) {
+export async function getLeadTimeline(sessionId: string | null | undefined) {
   if (!sessionId) return []
 
   try {
