@@ -1,4 +1,6 @@
 
+import { HeroFeaturesCard } from './HeroFeaturesCard';
+
 export interface HeroBannerProps {
     badge_text?: string;
     headline?: string;
@@ -72,9 +74,8 @@ export function HeroBanner({
                 </div>
             </div>
 
-            <div className="relative fade-up delay-600 z-10 w-full hidden lg:block">
-                {/* Form glow effect placeholder since form moved to FAQ */}
-                <div className="absolute inset-0 bg-[var(--teal)]/10 blur-[100px] rounded-full pointer-events-none"></div>
+            <div className="relative fade-up delay-600 z-10 w-full hidden lg:flex justify-center xl:justify-end">
+                <HeroFeaturesCard />
             </div>
         </section>
     );
