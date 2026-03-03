@@ -73,45 +73,51 @@ export function CurriculumTimeline({
         <section className="py-[100px] px-[5%] relative z-10" id="curriculum">
             <div className="section-label">{section_label}</div>
             <h2 className="section-title whitespace-pre-line">{headline}</h2>
-            <p className="section-desc !text-slate-600 font-medium">{description}</p>
+            <p className="section-desc !text-slate-600 font-medium max-w-2xl">{description}</p>
 
-            <div className="mb-16 relative">
-                {/* Soft glow behind the form for emphasis */}
-                <div className="absolute inset-0 bg-[#00D97E]/10 blur-[80px] rounded-[30px] pointer-events-none -z-10"></div>
-                <LeadCaptureForm sourceName="Landing Page - Curriculum Section" buttonText="Apply Now" />
-            </div>
+            <div className="max-w-[1280px] mx-auto grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-12 xl:gap-20 items-start mt-12">
 
-            <div className="relative pl-[2.5rem] max-w-[860px] mx-auto before:absolute before:left-[10px] before:top-[14px] before:bottom-[14px] before:w-[2px] before:bg-[linear-gradient(to_bottom,var(--teal),var(--sky),var(--teal))] before:rounded-[2px] before:opacity-60 timeline-container">
-                {terms.map((term, idx) => (
-                    <div key={idx} className="relative mb-[2.25rem] pl-[2rem] transition-all duration-500 ease-in-out hover:-translate-y-1 group fade-up timeline-item">
-                        {/* Timeline Dot */}
-                        <div className="absolute -left-[2rem] top-[10px] w-[20px] h-[20px] bg-[var(--grad)] border-3 border-[var(--white)] rounded-full shadow-[0_0_0_3px_rgba(0,217,126,0.25),0_4px_16px_rgba(0,217,126,0.3)] transition-transform duration-200 group-hover:scale-125"></div>
+                {/* Left side: Timeline Container */}
+                <div className="relative pl-[2.5rem] w-full before:absolute before:left-[10px] before:top-[14px] before:bottom-[14px] before:w-[2px] before:bg-[linear-gradient(to_bottom,var(--teal),var(--sky),var(--teal))] before:rounded-[2px] before:opacity-60 timeline-container">
+                    {terms.map((term, idx) => (
+                        <div key={idx} className="relative mb-[2.25rem] pl-[2rem] transition-all duration-500 ease-in-out hover:-translate-y-1 group fade-up timeline-item">
+                            {/* Timeline Dot */}
+                            <div className="absolute -left-[2rem] top-[10px] w-[20px] h-[20px] bg-[var(--grad)] border-3 border-[var(--white)] rounded-full shadow-[0_0_0_3px_rgba(0,217,126,0.25),0_4px_16px_rgba(0,217,126,0.3)] transition-transform duration-200 group-hover:scale-125"></div>
 
-                        <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
-                            <div className="font-sora font-bold text-[1.05rem] text-[var(--navy)]">{term.name}</div>
-                            <div className="bg-[rgba(110,218,253,0.1)] border border-[rgba(110,218,253,0.3)] text-[#1A4A8F] text-[0.73rem] font-semibold py-1 px-3 rounded-full whitespace-nowrap">
-                                {term.duration}
+                            <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
+                                <div className="font-sora font-bold text-[1.05rem] text-[var(--navy)]">{term.name}</div>
+                                <div className="bg-[rgba(110,218,253,0.1)] border border-[rgba(110,218,253,0.3)] text-[#1A4A8F] text-[0.73rem] font-semibold py-1 px-3 rounded-full whitespace-nowrap">
+                                    {term.duration}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap gap-1.5 mb-[0.6rem]">
+                                {term.tools.map((tool, tIdx) => (
+                                    <span key={tIdx} className={`
+                                        text-[0.72rem] font-semibold py-[0.2rem] px-[0.65rem] rounded-[5px] border
+                                        ${tool.is_ai_tag
+                                            ? 'bg-[rgba(0,217,126,0.1)] text-[#0F5C42] border-[rgba(0,217,126,0.25)]'
+                                            : 'bg-[rgba(110,218,253,0.12)] text-[#1A4A8F] border-[rgba(110,218,253,0.25)]'}
+                                    `}>
+                                        {tool.label}
+                                    </span>
+                                ))}
+                            </div>
+
+                            <div className="text-slate-600 text-[0.95rem] leading-[1.85] font-medium mt-2">
+                                {term.description}
                             </div>
                         </div>
+                    ))}
+                </div>
 
-                        <div className="flex flex-wrap gap-1.5 mb-[0.6rem]">
-                            {term.tools.map((tool, tIdx) => (
-                                <span key={tIdx} className={`
-                  text-[0.72rem] font-semibold py-[0.2rem] px-[0.65rem] rounded-[5px] border
-                  ${tool.is_ai_tag
-                                        ? 'bg-[rgba(0,217,126,0.1)] text-[#0F5C42] border-[rgba(0,217,126,0.25)]'
-                                        : 'bg-[rgba(110,218,253,0.12)] text-[#1A4A8F] border-[rgba(110,218,253,0.25)]'}
-                `}>
-                                    {tool.label}
-                                </span>
-                            ))}
-                        </div>
+                {/* Right side: Lead Capture Form */}
+                <div className="w-full relative sticky top-32 z-10" id="enroll">
+                    {/* Soft glow behind the form for emphasis */}
+                    <div className="absolute inset-0 bg-[#00D97E]/10 blur-[80px] rounded-[30px] pointer-events-none -z-10"></div>
+                    <LeadCaptureForm sourceName="Landing Page - Curriculum Section" buttonText="Apply Now" />
+                </div>
 
-                        <div className="text-slate-600 text-[0.95rem] leading-[1.85] font-medium">
-                            {term.description}
-                        </div>
-                    </div>
-                ))}
             </div>
         </section>
     );
