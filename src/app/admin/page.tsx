@@ -2,7 +2,9 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 import { Plus, Search, MoreHorizontal, Edit, LayoutTemplate, Trash2, Eye } from 'lucide-react';
-import { formatDate } from '@/lib/utils'; // We'll create this utility
+import { formatDate } from '@/lib/utils';
+
+export const dynamic = 'force-dynamic';
 
 export default async function PageList() {
     const supabase = await createClient();

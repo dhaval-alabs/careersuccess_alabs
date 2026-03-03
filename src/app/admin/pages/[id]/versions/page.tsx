@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import VersionsClient from './VersionsClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PageVersions({ params }: { params: Promise<{ id: string }> }) {
     const supabase = await createClient();
     const { id } = await params;

@@ -14,8 +14,8 @@ import { CTABanner } from '@/components/public/sections/CTABanner';
 import { Footer } from '@/components/public/sections/Footer';
 import { AnalyticsTracker } from '@/components/public/AnalyticsTracker';
 
-// Revalidate this page every 60 seconds (ISR)
-export const revalidate = 60;
+// Enforce dynamic rendering for this page
+export const dynamic = 'force-dynamic';
 
 export default async function LandingPage({ params, searchParams }: { params: Promise<{ slug: string }>, searchParams: Promise<{ preview?: string }> }) {
     const supabase = await createClient();

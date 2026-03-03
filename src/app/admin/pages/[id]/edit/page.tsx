@@ -2,6 +2,8 @@ import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import EditorClient from './EditorClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
     const supabase = await createClient();
     const { id } = await params;

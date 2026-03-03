@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import InboxClient from './InboxClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function SubmissionsInbox() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
