@@ -1,4 +1,5 @@
 import React from 'react';
+import LeadCaptureForm from '@/components/forms/LeadCaptureForm';
 
 export interface CurriculumTermTool {
     label: string;
@@ -72,9 +73,15 @@ export function CurriculumTimeline({
         <section className="py-[100px] px-[5%] relative z-10" id="curriculum">
             <div className="section-label">{section_label}</div>
             <h2 className="section-title whitespace-pre-line">{headline}</h2>
-            <p className="section-desc">{description}</p>
+            <p className="section-desc !text-slate-600 font-medium">{description}</p>
 
-            <div className="relative pl-[2.5rem] max-w-[860px] before:absolute before:left-[10px] before:top-[14px] before:bottom-[14px] before:w-[2px] before:bg-[linear-gradient(to_bottom,var(--teal),var(--sky),var(--teal))] before:rounded-[2px] before:opacity-60 timeline-container">
+            <div className="mb-16 relative">
+                {/* Soft glow behind the form for emphasis */}
+                <div className="absolute inset-0 bg-[#00D97E]/10 blur-[80px] rounded-[30px] pointer-events-none -z-10"></div>
+                <LeadCaptureForm sourceName="Landing Page - Curriculum Section" buttonText="Apply Now" />
+            </div>
+
+            <div className="relative pl-[2.5rem] max-w-[860px] mx-auto before:absolute before:left-[10px] before:top-[14px] before:bottom-[14px] before:w-[2px] before:bg-[linear-gradient(to_bottom,var(--teal),var(--sky),var(--teal))] before:rounded-[2px] before:opacity-60 timeline-container">
                 {terms.map((term, idx) => (
                     <div key={idx} className="relative mb-[2.25rem] pl-[2rem] transition-all duration-500 ease-in-out hover:-translate-y-1 group fade-up timeline-item">
                         {/* Timeline Dot */}
@@ -100,7 +107,7 @@ export function CurriculumTimeline({
                             ))}
                         </div>
 
-                        <div className="text-[var(--muted)] text-[0.92rem] leading-[1.85]">
+                        <div className="text-slate-600 text-[0.95rem] leading-[1.85] font-medium">
                             {term.description}
                         </div>
                     </div>

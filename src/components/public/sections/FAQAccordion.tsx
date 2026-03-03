@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import LeadCaptureForm from '@/components/forms/LeadCaptureForm';
 
 export interface FAQItem {
     question: string;
@@ -36,7 +35,7 @@ export function FAQAccordion({
                 <div className="section-label">{section_label}</div>
                 <h2 className="section-title whitespace-pre-line mb-12">{headline}</h2>
 
-                <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-20 items-start">
+                <div className="max-w-4xl mx-auto">
                     {/* Left: FAQs */}
                     <div className="w-full">
                         {faqs.map((faq, idx) => (
@@ -51,18 +50,11 @@ export function FAQAccordion({
                                     </span>
                                 </summary>
                                 {/* The answer container */}
-                                <div className="px-[1.4rem] pb-[1.2rem] text-[var(--muted)] text-[0.92rem] leading-[1.85] border-t border-[rgba(110,218,253,0.12)] pt-[1.1rem]">
+                                <div className="px-[1.4rem] pb-[1.2rem] text-slate-600 font-medium text-[0.95rem] leading-[1.85] border-t border-[rgba(110,218,253,0.12)] pt-[1.1rem]">
                                     {faq.answer}
                                 </div>
                             </details>
                         ))}
-                    </div>
-
-                    {/* Right: Lead Capture Form */}
-                    <div className="w-full relative sticky top-32 z-10" id="enroll">
-                        {/* Soft glow behind the form for emphasis */}
-                        <div className="absolute inset-0 bg-[#00D97E]/10 blur-[80px] rounded-[30px] pointer-events-none -z-10"></div>
-                        <LeadCaptureForm sourceName="Landing Page - FAQ Bottom" buttonText={form?.submit_label || "Get A Callback"} />
                     </div>
                 </div>
             </div>

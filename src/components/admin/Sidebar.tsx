@@ -17,7 +17,6 @@ export function Sidebar({ className, role = 'editor' }: SidebarProps) {
     const routes = [
         { label: 'Dashboard', icon: LayoutDashboard, href: '/admin', roles: ['editor', 'publisher', 'super_admin'] },
         { label: 'Pages', icon: FileText, href: '/admin/pages', roles: ['editor', 'publisher', 'super_admin'] },
-        { label: 'Courses', icon: BookOpen, href: '/admin/courses', roles: ['editor', 'publisher', 'super_admin'] },
         { label: 'Leads Inbox', icon: Inbox, href: '/admin/leads', roles: ['editor', 'publisher', 'super_admin'] },
         { label: 'Users', icon: Users, href: '/admin/users', roles: ['super_admin'] },
         { label: 'Audit Logs', icon: Settings, href: '/admin/settings/audit-logs', roles: ['super_admin'] },
@@ -38,9 +37,9 @@ export function Sidebar({ className, role = 'editor' }: SidebarProps) {
                                 className="w-full justify-start"
                                 asChild
                             >
-                                <Link href={route.href}>
-                                    <route.icon className="mr-2 h-4 w-4" />
-                                    {route.label}
+                                <Link href={route.href} className="flex items-center w-full">
+                                    <route.icon className="mr-3 h-5 w-5" />
+                                    <span className="text-[15px]">{route.label}</span>
                                 </Link>
                             </Button>
                         ))}
