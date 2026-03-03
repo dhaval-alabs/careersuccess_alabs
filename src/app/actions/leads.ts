@@ -20,7 +20,7 @@ export async function createLeadAction(data: LeadEntry) {
     const { error } = await supabase.from('leads').insert([{
       name: data.name,
       email: data.email,
-      phone: \`\${data.countryCode} \${data.mobile}\`, // Combine for UI compatibility
+      phone: `${data.countryCode} ${data.mobile}`, // Combine for UI compatibility
       city: data.city,
       form_source: data.form_source || 'Default Landing Page',
       session_id: data.session_id,

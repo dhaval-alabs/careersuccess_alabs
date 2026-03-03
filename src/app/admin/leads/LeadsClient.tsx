@@ -39,11 +39,11 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         // Build CSV rows
         const rows = filteredLeads.map(lead => [
             new Date(lead.created_at).toLocaleString(),
-    \`"\${lead.name || ''}"\`,
-            \`"\${lead.email || ''}"\`,
-            \`"\${lead.phone || ''}"\`,
-            \`"\${lead.form_source || 'Unknown'}"\`,
-            \`"\${lead.session_id || ''}"\`
+            `"${lead.name || ''}"`,
+            `"${lead.email || ''}"`,
+            `"${lead.phone || ''}"`,
+            `"${lead.form_source || 'Unknown'}"`,
+            `"${lead.session_id || ''}"`
         ]);
 
         const csvContent = [
@@ -55,14 +55,14 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", \`leads_export_\${new Date().toISOString().split('T')[0]}.csv\`);
+        link.setAttribute("download", `leads_export_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
 
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(\`Are you sure you want to delete the lead for \${name}?\`)) return;
+        if (!confirm(`Are you sure you want to delete the lead for ${name}?`)) return;
 
         try {
             await deleteLead(id);
@@ -273,7 +273,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
                                                 return (
                                                     <div key={event.id} className="relative pl-6">
                                                         {/* Timeline node */}
-                                                        <div className={\`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center shadow-sm \${isClick ? 'bg-blue-500' : isSection ? 'bg-purple-500' : 'bg-slate-400'}\`}></div>
+                                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center shadow-sm ${isClick ? 'bg-blue-500' : isSection ? 'bg-purple-500' : 'bg-slate-400'}`}></div>
 
                                                         {/* Event Card */}
                                                         <div className="bg-white p-3 rounded-lg border shadow-sm flex flex-col gap-1 hover:shadow-md transition-shadow">
