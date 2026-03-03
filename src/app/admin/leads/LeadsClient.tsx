@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Download, Search, Trash2, Eye, User, Clock, MapPin, HandPointer, FormInput } from 'lucide-react';
+import { Download, Search, Trash2, Eye, User, Clock, MapPin, Pointer, FormInput, History as HistoryIcon } from 'lucide-react';
 import { deleteLead, getLeadTimeline } from '@/app/actions/leads';
 
 export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
@@ -262,7 +262,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
                                         <div className="flex justify-center items-center h-full text-sm text-slate-500">Loading timeline events...</div>
                                     ) : timeline.length === 0 ? (
                                         <div className="flex flex-col justify-center items-center h-full text-slate-400 text-sm bg-white border border-dashed rounded-lg p-8">
-                                            <History className="h-8 w-8 mb-2 opacity-30" />
+                                            <HistoryIcon className="h-8 w-8 mb-2 opacity-30" />
                                             <span>No tracking events found for this session.</span>
                                             <span className="text-xs mt-1 text-slate-400/70">The user may have blocked tracking scripts.</span>
                                         </div>
@@ -282,7 +282,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
                                                         <div className="bg-white p-3 rounded-lg border shadow-sm flex flex-col gap-1 hover:shadow-md transition-shadow">
                                                             <div className="flex justify-between items-start">
                                                                 <div className="flex items-center gap-1.5 font-medium text-sm text-slate-800">
-                                                                    {isClick && <HandPointer className="h-3.5 w-3.5 text-blue-500" />}
+                                                                    {isClick && <Pointer className="h-3.5 w-3.5 text-blue-500" />}
                                                                     {isSection && <Eye className="h-3.5 w-3.5 text-purple-500" />}
                                                                     {isClick ? 'Clicked Element' : isSection ? 'Viewed Section' : event.event_type}
                                                                 </div>

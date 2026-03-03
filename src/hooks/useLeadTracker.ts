@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
+
 
 export function useLeadTracker() {
     const pathname = usePathname();
@@ -13,7 +13,7 @@ export function useLeadTracker() {
     useEffect(() => {
         let sid: string | null = sessionStorage.getItem('alabs_session_id');
         if (!sid) {
-            sid = uuidv4();
+            sid = crypto.randomUUID();
             sessionStorage.setItem('alabs_session_id', sid);
         }
         setSessionId(sid);

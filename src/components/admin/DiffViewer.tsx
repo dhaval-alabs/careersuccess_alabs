@@ -25,7 +25,7 @@ export function DiffViewer({
 
         // If identical, just return one un-highlighted chunk
         if (safeOld === safeNew) {
-            return [{ value: safeNew }];
+            return [{ value: safeNew }] as unknown as diff.Change[];
         }
 
         switch (type) {
