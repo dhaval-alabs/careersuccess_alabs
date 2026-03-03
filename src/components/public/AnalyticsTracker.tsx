@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSearchParams, usePathname } from 'next/navigation';
+import { useLeadTracker } from '@/hooks/useLeadTracker';
 import Script from 'next/script';
 
 export interface AnalyticsTrackerProps {
@@ -13,6 +14,7 @@ export interface AnalyticsTrackerProps {
 export function AnalyticsTracker({ ga4Id, metaPixelId, pageId }: AnalyticsTrackerProps) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
+    const sessionId = useLeadTracker();
 
     // 1. UTM Parameter Capture
     useEffect(() => {

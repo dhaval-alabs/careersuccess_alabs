@@ -29,7 +29,7 @@ export function HeroBanner({
     form
 }: HeroBannerProps) {
     return (
-        <section className="min-h-screen pt-[130px] pb-[100px] px-[5%] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center relative z-10">
+        <section data-track-section={`hero_banner`} className="min-h-screen pt-[130px] pb-[100px] px-[5%] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center relative z-10">
             <div className="hero-content">
                 {badge_text && (
                     <div className="inline-flex items-center gap-2 bg-[rgba(110,218,253,0.1)] border border-[rgba(0,217,126,0.35)] text-[#1A4A8F] text-[0.73rem] font-bold tracking-[0.1em] uppercase py-1.5 px-4 rounded-full mb-7 fade-up">
@@ -61,12 +61,12 @@ export function HeroBanner({
 
                 <div className="flex gap-4 flex-wrap fade-up delay-400">
                     {cta_primary && (
-                        <a href={cta_primary.url} className="btn-primary-custom">
+                        <a data-track-click={`hero_primary_desktop`} href={cta_primary.url} className="btn-primary-custom">
                             {cta_primary.label}
                         </a>
                     )}
                     {cta_secondary && (
-                        <a href={cta_secondary.url} className="btn-secondary-custom">
+                        <a data-track-click={`hero_secondary_desktop`} href={cta_secondary.url} className="btn-secondary-custom">
                             {cta_secondary.label}
                         </a>
                     )}
@@ -125,9 +125,9 @@ export function HeroBanner({
                             <div>Nasscom-FutureSkills<br />Prime Certified</div>
                         </div>
                         {form?.submit_label ? (
-                            <a href="#enroll" className="btn-primary-custom !text-[0.82rem] !py-2.5 !px-[1.1rem]">{form.submit_label}</a>
+                            <a data-track-click={`hero_card_enroll`} href="#enroll" className="btn-primary-custom !text-[0.82rem] !py-2.5 !px-[1.1rem]">{form.submit_label}</a>
                         ) : (
-                            <a href="#enroll" className="btn-primary-custom !text-[0.82rem] !py-2.5 !px-[1.1rem]">Enroll →</a>
+                            <a data-track-click={`hero_card_enroll`} href="#enroll" className="btn-primary-custom !text-[0.82rem] !py-2.5 !px-[1.1rem]">Enroll →</a>
                         )}
 
                     </div>

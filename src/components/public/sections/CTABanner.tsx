@@ -16,7 +16,7 @@ export function CTABanner({
     cta_secondary = { label: "Download the Syllabus", url: "https://www.analytixlabs.co.in" }
 }: CTABannerProps) {
     return (
-        <section className="bg-[var(--navy)] text-center relative overflow-hidden py-[100px] px-[5%]" id="enroll">
+        <section data-track-section={`cta_banner`} className="bg-[var(--navy)] text-center relative overflow-hidden py-[100px] px-[5%]" id="enroll">
             {/* Background blobs */}
             <div className="absolute inset-0 pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_700px_500px_at_50%_60%,rgba(0,217,126,0.12)_0%,transparent_65%),radial-gradient(ellipse_400px_300px_at_20%_10%,rgba(110,218,253,0.08)_0%,transparent_65%)]"></div>
 
@@ -29,10 +29,10 @@ export function CTABanner({
                 <p className="section-desc !text-[rgba(255,255,255,0.6)] !mx-auto !mb-[2.5rem]">{description}</p>
 
                 <div className="flex gap-4 justify-center flex-wrap relative z-10">
-                    <a href={cta_primary.url} className="btn-primary-custom !text-[1rem] !py-[1rem] !px-[2.25rem]">
+                    <a data-track-click={`cta_banner_primary`} href={cta_primary.url} className="btn-primary-custom !text-[1rem] !py-[1rem] !px-[2.25rem]">
                         {cta_primary.label}
                     </a>
-                    <a href={cta_secondary.url} className="btn-secondary-custom !bg-[rgba(255,255,255,0.07)] !text-[rgba(255,255,255,0.85)] !border-[rgba(255,255,255,0.2)]">
+                    <a data-track-click={`cta_banner_secondary`} href={cta_secondary.url} className="btn-secondary-custom !bg-[rgba(255,255,255,0.07)] !text-[rgba(255,255,255,0.85)] !border-[rgba(255,255,255,0.2)]">
                         {cta_secondary.label}
                     </a>
                 </div>
