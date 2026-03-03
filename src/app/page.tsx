@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="min-h-screen relative flex items-center justify-center font-sans overflow-hidden bg-[var(--background)]">
+    <main className="min-h-screen relative flex flex-col font-sans overflow-hidden bg-[var(--background)]">
       {/* Holographic background elements from the global styles */}
       <div className="holo-bg">
         <div className="holo-blob holo-blob-1"></div>
@@ -14,7 +14,8 @@ export default function Home() {
       <div className="holo-grid opacity-40"></div>
       <div className="holo-shimmer"></div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-[5%] text-center fade-up">
+      {/* Main Content Center */}
+      <div className="relative flex-grow flex flex-col items-center justify-center z-10 w-full max-w-4xl mx-auto px-[5%] text-center fade-up pt-16 pb-8">
 
         {/* Logo / Brand */}
         <div className="mb-12 inline-block">
@@ -38,17 +39,14 @@ export default function Home() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
           <Link href="/lp/business-analytics-ncr" className="btn-primary-custom text-[1.05rem] py-4 px-8 w-full sm:w-auto text-center">
-            Explore Programs ↗
-          </Link>
-          <Link href="/login" className="btn-secondary-custom text-[1.05rem] py-4 px-8 w-full sm:w-auto text-center">
-            Admin Login
+            Explore Offers ↗
           </Link>
         </div>
+      </div>
 
-        {/* Footer info */}
-        <div className="absolute bottom-8 left-0 right-0 text-center text-[var(--muted-light)] text-sm px-6">
-          © {new Date().getFullYear()} AnalytixLabs. A Nasscom-FutureSkills Prime Certified Program.
-        </div>
+      {/* Footer info (Sticky at the bottom without overlapping) */}
+      <div className="relative z-10 w-full text-center text-[var(--muted-light)] text-sm px-6 py-6 mt-auto">
+        © {new Date().getFullYear()} AnalytixLabs. A Nasscom-FutureSkills Prime Certified Program.
       </div>
     </main>
   );
