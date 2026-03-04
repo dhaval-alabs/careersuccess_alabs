@@ -21,7 +21,7 @@ export function AnalyticsTracker({ ga4Id, metaPixelId, pageId }: AnalyticsTracke
         if (typeof window === 'undefined') return;
 
         const utmObj: Record<string, string> = {};
-        const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+        const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'keyword', 'matchtype'];
 
         let hasUtms = false;
         utmKeys.forEach(key => {

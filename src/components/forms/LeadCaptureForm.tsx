@@ -34,6 +34,20 @@ export default function LeadCaptureForm({ sourceName = 'Hero Section', buttonTex
 
     const formData = new FormData(e.currentTarget)
 
+    let gclid, source_keyword;
+    if (typeof window !== 'undefined') {
+      const storedUtms = sessionStorage.getItem('current_utms');
+      if (storedUtms) {
+        try {
+          const parsed = JSON.parse(storedUtms);
+          gclid = parsed.gclid;
+          source_keyword = parsed.keyword;
+        } catch (e) {
+          console.error("Failed to parse stored UTMs", e);
+        }
+      }
+    }
+
     // Explicit shape based on our constraints
     const data = {
       name: formData.get('name') as string,
@@ -42,7 +56,9 @@ export default function LeadCaptureForm({ sourceName = 'Hero Section', buttonTex
       mobile: formData.get('mobile') as string,
       city: formData.get('city') as string,
       form_source: sourceName, // Attribution
-      session_id: typeof window !== 'undefined' ? sessionStorage.getItem('alabs_session_id') || undefined : undefined
+      session_id: typeof window !== 'undefined' ? sessionStorage.getItem('alabs_session_id') || undefined : undefined,
+      gclid: gclid,
+      source_keyword: source_keyword
     }
 
     startTransition(async () => {

@@ -11,6 +11,8 @@ interface LeadEntry {
   city: string
   form_source?: string
   session_id?: string
+  gclid?: string
+  source_keyword?: string
 }
 
 export async function createLeadAction(data: LeadEntry) {
@@ -24,6 +26,8 @@ export async function createLeadAction(data: LeadEntry) {
       city: data.city,
       form_source: data.form_source || 'Default Landing Page',
       session_id: data.session_id,
+      gclid: data.gclid,
+      source_keyword: data.source_keyword,
       created_at: new Date().toISOString()
     }])
 
