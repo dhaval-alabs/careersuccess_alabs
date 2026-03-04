@@ -77,6 +77,8 @@ export default function InboxClient({ initialSubmissions }: { initialSubmissions
                             <th className="px-4 py-3">Page / Source</th>
                             <th className="px-4 py-3">Prospect Details</th>
                             <th className="px-4 py-3">Raw Data</th>
+                            <th className="px-4 py-3">GCLID</th>
+                            <th className="px-4 py-3">Keyword</th>
                             <th className="px-4 py-3">UTMs</th>
                         </tr>
                     </thead>
@@ -114,16 +116,20 @@ export default function InboxClient({ initialSubmissions }: { initialSubmissions
                                             </pre>
                                         </td>
                                         <td className="px-4 py-3">
+                                            {sub.gclid ? (
+                                                <span className="font-mono text-[10px] text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100 truncate max-w-[120px] inline-block" title={sub.gclid}>{sub.gclid}</span>
+                                            ) : <span className="text-slate-400 italic text-xs">-</span>}
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            {sub.source_keyword ? (
+                                                <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-1 rounded border border-amber-200">{sub.source_keyword}</span>
+                                            ) : <span className="text-slate-400 italic text-xs">-</span>}
+                                        </td>
+                                        <td className="px-4 py-3">
                                             <div className="text-xs text-slate-600 flex flex-col gap-1">
                                                 {sub.utm_source ? (
                                                     <div><span className="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 mr-1 text-[10px] font-bold">SRC</span>{sub.utm_source}</div>
                                                 ) : <span className="opacity-50 italic">No UTMs</span>}
-                                                {sub.gclid && (
-                                                    <div><span className="bg-[#4285F4]/10 text-[#4285F4] px-1.5 py-0.5 rounded border border-[#4285F4]/20 mr-1 text-[10px] font-bold">GCLID</span><span className="font-mono text-[10px] truncate max-w-[120px] inline-block align-bottom">{sub.gclid}</span></div>
-                                                )}
-                                                {sub.source_keyword && (
-                                                    <div><span className="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200 mr-1 text-[10px] font-bold">KW</span>{sub.source_keyword}</div>
-                                                )}
                                             </div>
                                         </td>
                                     </tr>

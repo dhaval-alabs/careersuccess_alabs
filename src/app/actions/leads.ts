@@ -36,6 +36,30 @@ export async function createLeadAction(data: LeadEntry) {
       return { success: false, error: 'Failed to save lead information' }
     }
 
+    // CRM Webhook Push (Optional API Sync)
+    const CRM_WEBHOOK_URL = process.env.CRM_WEBHOOK_URL;
+    if (CRM_WEBHOOK_URL) {
+      try {
+        await fetch(CRM_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            phone: `${data.countryCode} ${data.mobile}`,
+            city: data.city,
+            form_source: data.form_source,
+            gclid: data.gclid,
+            source_keyword: data.source_keyword,
+            submitted_at: new Date().toISOString()
+          })
+        });
+      } catch (webhookError) {
+        console.error("CRM Webhook failed:", webhookError);
+        // We don't fail the user submission if the CRM sync fails
+      }
+    }
+
     revalidatePath('/admin/leads', 'page')
     return { success: true }
   } catch (error) {
