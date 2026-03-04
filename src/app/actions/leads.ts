@@ -57,12 +57,19 @@ export async function createLeadAction(data: LeadEntry) {
           lastName = nameParts.slice(1).join(' ');
         }
 
+        // LSQ Phone rule: LSQ automatically prepends '91' to Indian numbers.
+        // Send only the 10-digit number for +91 to avoid WhatsApp automation breaking.
+        let lsqPhone = cleanPhone;
+        if (data.countryCode === '+91') {
+          lsqPhone = cleanMobile;
+        }
+
         // Leadsquared Lead Capture API format requires an array of attributes
         const lsqPayload = [
           { "Attribute": "FirstName", "Value": firstName },
           { "Attribute": "LastName", "Value": lastName },
           { "Attribute": "EmailAddress", "Value": data.email },
-          { "Attribute": "Phone", "Value": cleanPhone },
+          { "Attribute": "Phone", "Value": lsqPhone },
           { "Attribute": "mx_City_name", "Value": data.city }, // Mapped to requested custom field
           { "Attribute": "Source", "Value": data.form_source || "Website Form" },
           { "Attribute": "mx_gclid", "Value": data.gclid || "" }, // Requested to send blank if not present

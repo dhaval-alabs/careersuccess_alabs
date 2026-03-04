@@ -24,8 +24,22 @@ export function AnalyticsTracker({ ga4Id, metaPixelId, pageId }: AnalyticsTracke
         const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'keyword', 'matchtype'];
 
         let hasUtms = false;
+
+        // Next.js searchParams misses parameters that fall after a '#' hash fragment (e.g. ad networks appending ?gclid=x to an anchor link)
+        const fullHashAndSearch = window.location.search + window.location.hash;
+
         utmKeys.forEach(key => {
-            const val = searchParams.get(key);
+            let val = searchParams.get(key);
+
+            // Backup regex check for parameters stuck inside the hash fragment
+            if (!val) {
+                const regex = new RegExp(`[?&]${key}=([^&#]*)`, 'i');
+                const match = fullHashAndSearch.match(regex);
+                if (match && match[1]) {
+                    val = match[1];
+                }
+            }
+
             if (val) {
                 utmObj[key] = val;
                 hasUtms = true;
