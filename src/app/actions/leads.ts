@@ -71,7 +71,8 @@ export async function createLeadAction(data: LeadEntry) {
           { "Attribute": "EmailAddress", "Value": data.email },
           { "Attribute": "Phone", "Value": lsqPhone },
           { "Attribute": "mx_City_name", "Value": data.city }, // Mapped to requested custom field
-          { "Attribute": "Source", "Value": data.form_source || "Website Form" },
+          { "Attribute": "Source", "Value": "PPC" }, // Hardcoded per user request
+          { "Attribute": "Notes", "Value": data.form_source || "Website Form" }, // Moved form location to Notes
           { "Attribute": "mx_gclid", "Value": data.gclid || "" }, // Requested to send blank if not present
           { "Attribute": "mx_Keyword", "Value": data.source_keyword || "" },
           { "Attribute": "mx_Page_Url", "Value": data.page_url || "" },
