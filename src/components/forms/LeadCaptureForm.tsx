@@ -58,7 +58,8 @@ export default function LeadCaptureForm({ sourceName = 'Hero Section', buttonTex
       form_source: sourceName, // Attribution
       session_id: typeof window !== 'undefined' ? sessionStorage.getItem('alabs_session_id') || undefined : undefined,
       gclid: gclid,
-      source_keyword: source_keyword
+      source_keyword: source_keyword,
+      page_url: typeof window !== 'undefined' ? window.location.href : undefined
     }
 
     startTransition(async () => {

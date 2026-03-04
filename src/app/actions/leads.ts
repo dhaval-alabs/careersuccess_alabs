@@ -13,16 +13,24 @@ interface LeadEntry {
   session_id?: string
   gclid?: string
   source_keyword?: string
+  page_url?: string
 }
 
 export async function createLeadAction(data: LeadEntry) {
   try {
     const supabase = await createClient()
 
+    // Phone format cleanup: Prevent +91 91xxxxxxxx
+    let cleanMobile = data.mobile.trim();
+    if (data.countryCode === '+91' && cleanMobile.startsWith('91') && cleanMobile.length > 10) {
+      cleanMobile = cleanMobile.substring(2); // Strip the extra 91 if someone typed it into the input
+    }
+    const cleanPhone = `${data.countryCode}${cleanMobile}`;
+
     const { error } = await supabase.from('leads').insert([{
       name: data.name,
       email: data.email,
-      phone: `${data.countryCode} ${data.mobile}`, // Combine for UI compatibility
+      phone: cleanPhone, // Combined cleanly
       city: data.city,
       form_source: data.form_source || 'Default Landing Page',
       session_id: data.session_id,
@@ -54,12 +62,14 @@ export async function createLeadAction(data: LeadEntry) {
           { "Attribute": "FirstName", "Value": firstName },
           { "Attribute": "LastName", "Value": lastName },
           { "Attribute": "EmailAddress", "Value": data.email },
-          { "Attribute": "Phone", "Value": `${data.countryCode}${data.mobile}` },
-          { "Attribute": "City", "Value": data.city },
+          { "Attribute": "Phone", "Value": cleanPhone },
+          { "Attribute": "mx_City_name", "Value": data.city }, // Mapped to requested custom field
           { "Attribute": "Source", "Value": data.form_source || "Website Form" },
-          { "Attribute": "mx_GCLID", "Value": data.gclid || "" },  // Standard LSQ custom field prefix
-          { "Attribute": "mx_Keyword", "Value": data.source_keyword || "" }
-        ].filter(item => item.Value !== ""); // Clean empty values
+          { "Attribute": "mx_gclid", "Value": data.gclid || "" }, // Requested to send blank if not present
+          { "Attribute": "mx_Keyword", "Value": data.source_keyword || "" },
+          { "Attribute": "mx_Page_Url", "Value": data.page_url || "" },
+          { "Attribute": "mx_terms_and_condition", "Value": "true" } // Assuming all submissions accepted consent
+        ];
 
         await fetch(CRM_WEBHOOK_URL, {
           method: 'POST',
