@@ -36,23 +36,35 @@ export async function createLeadAction(data: LeadEntry) {
       return { success: false, error: 'Failed to save lead information' }
     }
 
-    // CRM Webhook Push (Optional API Sync)
+    // CRM Webhook Push (Leadsquared API Sync)
     const CRM_WEBHOOK_URL = process.env.CRM_WEBHOOK_URL;
     if (CRM_WEBHOOK_URL) {
       try {
+        // Leadsquared highly prefers split Name fields
+        let firstName = data.name;
+        let lastName = '';
+        const nameParts = data.name.trim().split(' ');
+        if (nameParts.length > 1) {
+          firstName = nameParts[0];
+          lastName = nameParts.slice(1).join(' ');
+        }
+
+        // Leadsquared Lead Capture API format requires an array of attributes
+        const lsqPayload = [
+          { "Attribute": "FirstName", "Value": firstName },
+          { "Attribute": "LastName", "Value": lastName },
+          { "Attribute": "EmailAddress", "Value": data.email },
+          { "Attribute": "Phone", "Value": `${data.countryCode}${data.mobile}` },
+          { "Attribute": "City", "Value": data.city },
+          { "Attribute": "Source", "Value": data.form_source || "Website Form" },
+          { "Attribute": "mx_GCLID", "Value": data.gclid || "" },  // Standard LSQ custom field prefix
+          { "Attribute": "mx_Keyword", "Value": data.source_keyword || "" }
+        ].filter(item => item.Value !== ""); // Clean empty values
+
         await fetch(CRM_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: data.name,
-            email: data.email,
-            phone: `${data.countryCode} ${data.mobile}`,
-            city: data.city,
-            form_source: data.form_source,
-            gclid: data.gclid,
-            source_keyword: data.source_keyword,
-            submitted_at: new Date().toISOString()
-          })
+          body: JSON.stringify(lsqPayload)
         });
       } catch (webhookError) {
         console.error("CRM Webhook failed:", webhookError);
