@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
-import { Sidebar } from '@/components/admin/Sidebar';
-import { Header } from '@/components/admin/Header';
+import { AdminNav } from '@/components/admin/AdminNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,23 +16,15 @@ export default async function AdminLayout({
         redirect('/login');
     }
 
-    const { data: profile } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-    const role = profile?.role || 'editor';
-
     return (
-        <div className="flex min-h-screen flex-col bg-muted/40">
-            <Header user={user} role={role} />
-            <div className="flex flex-1">
-                <Sidebar role={role} className="hidden w-64 border-r bg-background md:block" />
-                <main className="flex-1 p-6 lg:p-8">
+        <div className="admin-premium-bg">
+            <AdminNav />
+            <main className="max-w-7xl mx-auto pt-24 px-4 sm:px-6 lg:px-8 pb-12">
+                <div className="fade-up">
                     {children}
-                </main>
-            </div>
+                </div>
+            </main>
         </div>
     );
 }
+

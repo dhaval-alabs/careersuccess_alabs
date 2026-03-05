@@ -61,26 +61,26 @@ export function DiffViewer({
     }
 
     return (
-        <div className={cn("font-mono text-xs border rounded-md overflow-hidden bg-slate-50", className)}>
-            <div className="p-3 whitespace-pre-wrap leading-relaxed">
+        <div className={cn("font-mono text-[13px] border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-inner", className)}>
+            <div className="p-6 whitespace-pre-wrap leading-relaxed tracking-tight">
                 {diffResult.map((part, index) => {
                     if (part.added) {
                         return (
-                            <span key={index} className="bg-green-100 text-green-800 px-0.5 rounded-sm mx-[1px]">
+                            <span key={index} className="bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded-md mx-[1px] ring-1 ring-emerald-100 shadow-sm transition-all hover:bg-emerald-100">
                                 {part.value}
                             </span>
                         );
                     }
                     if (part.removed) {
                         return (
-                            <span key={index} className="bg-red-100 text-red-800 line-through px-0.5 rounded-sm mx-[1px] opacity-70">
+                            <span key={index} className="bg-rose-50 text-rose-700 line-through px-1.5 py-0.5 rounded-md mx-[1px] opacity-60 ring-1 ring-rose-100 shadow-sm transition-all hover:bg-rose-100">
                                 {part.value}
                             </span>
                         );
                     }
                     // Unchanged text
                     return (
-                        <span key={index} className="text-slate-600">
+                        <span key={index} className="text-slate-500 font-medium">
                             {part.value}
                         </span>
                     );

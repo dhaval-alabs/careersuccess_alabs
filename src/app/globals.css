@@ -386,3 +386,78 @@ body {
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 4px 32px rgba(0, 217, 126, 0.07), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
 }
+
+/* --- Admin Premium UI Redesign --- */
+:root {
+  --admin-bg: #F8FAFC;
+  --admin-card-bg: #FFFFFF;
+  --admin-card-radius: 24px;
+  --admin-pill-radius: 100px;
+  --admin-accent: #1A4A8F;
+  --admin-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.04);
+}
+
+.admin-premium-bg {
+  background-color: var(--admin-bg);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(110, 218, 253, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(0, 217, 126, 0.03) 0px, transparent 50%);
+  min-height: 100vh;
+}
+
+.premium-card {
+  background: var(--admin-card-bg);
+  border-radius: var(--admin-card-radius);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--admin-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
+}
+
+.nav-pill-container {
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  padding: 6px;
+  border-radius: var(--admin-pill-radius);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-pill {
+  padding: 8px 18px;
+  border-radius: var(--admin-pill-radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-pill:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-pill.active {
+  background: white;
+  color: #0F172A;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.metric-value {
+  font-family: 'Sora', sans-serif;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+/* Custom animated bar for the dashboard chart */
+.chart-bar {
+  transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}

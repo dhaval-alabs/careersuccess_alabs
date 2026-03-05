@@ -99,78 +99,98 @@ export default function NewPage() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto py-8">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900">Create New Landing Page</h1>
-                <p className="text-muted-foreground mt-2">Initialize a new landing page. It will be pre-populated with the 10 standard sections.</p>
+        <div className="min-h-screen admin-premium-bg py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl mx-auto">
+                <div className="mb-10">
+                    <h1 className="text-4xl font-bold tracking-tight text-slate-900 font-sora">
+                        Create New Landing Page
+                    </h1>
+                    <p className="text-slate-500 mt-3 text-lg">
+                        Initialize a new landing page. It will be pre-populated with the 10 standard sections.
+                    </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="premium-card p-10 space-y-8">
+                    {error && (
+                        <div className="p-4 bg-red-50 text-red-800 rounded-2xl border border-red-100 text-sm animate-in fade-in slide-in-from-top-1">
+                            {error}
+                        </div>
+                    )}
+
+                    <div className="grid gap-8">
+                        <div className="space-y-3">
+                            <Label htmlFor="title" className="text-slate-700 font-medium ml-1">Page Title</Label>
+                            <Input
+                                id="title"
+                                value={title}
+                                onChange={handleTitleChange}
+                                placeholder="e.g. Data Analytics Spring Cohort"
+                                className="h-12 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/10 transition-all"
+                                required
+                            />
+                            <p className="text-xs text-slate-400 ml-1">Used internally and as the default SEO Title.</p>
+                        </div>
+
+                        <div className="space-y-3">
+                            <Label htmlFor="slug" className="text-slate-700 font-medium ml-1">URL Slug <span className="text-red-500">*</span></Label>
+                            <div className="flex rounded-xl shadow-sm overflow-hidden border border-slate-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/10 transition-all">
+                                <span className="inline-flex items-center px-4 bg-slate-50 text-slate-400 text-sm border-r border-slate-200">
+                                    /lp/
+                                </span>
+                                <input
+                                    id="slug"
+                                    className="flex-1 h-12 px-4 text-sm outline-none bg-white"
+                                    value={slug}
+                                    onChange={(e) => setSlug(e.target.value)}
+                                    placeholder="data-analytics-spring"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <div className="space-y-3">
+                                <Label htmlFor="courseName" className="text-slate-700 font-medium ml-1">Course Name (Optional)</Label>
+                                <Input
+                                    id="courseName"
+                                    value={courseName}
+                                    onChange={(e) => setCourseName(e.target.value)}
+                                    placeholder="e.g. PG in Data Analytics"
+                                    className="h-12 rounded-xl border-slate-200"
+                                />
+                            </div>
+                            <div className="space-y-3">
+                                <Label htmlFor="campaignTag" className="text-slate-700 font-medium ml-1">Campaign Tag (Optional)</Label>
+                                <Input
+                                    id="campaignTag"
+                                    value={campaignTag}
+                                    onChange={(e) => setCampaignTag(e.target.value)}
+                                    placeholder="e.g. spring-2025-meta"
+                                    className="h-12 rounded-xl border-slate-200"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-8 flex items-center justify-end gap-4 border-t border-slate-100">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            className="h-12 px-6 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+                            onClick={() => router.push('/admin/pages')}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            className="h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-50"
+                            disabled={isLoading || !title || !slug}
+                        >
+                            {isLoading ? 'Creating...' : 'Create & Edit Template'}
+                        </Button>
+                    </div>
+                </form>
             </div>
-
-            <form onSubmit={handleSubmit} className="bg-white p-6 border rounded-xl shadow-sm space-y-6">
-                {error && (
-                    <div className="p-4 bg-red-50 text-red-800 rounded-md border border-red-200 text-sm">
-                        {error}
-                    </div>
-                )}
-
-                <div className="space-y-2">
-                    <Label htmlFor="title">Page Title</Label>
-                    <Input
-                        id="title"
-                        value={title}
-                        onChange={handleTitleChange}
-                        placeholder="e.g. Data Analytics Spring Cohort"
-                        required
-                    />
-                    <p className="text-xs text-muted-foreground">Used internally and as the default SEO Title.</p>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="slug">URL Slug <span className="text-red-500">*</span></Label>
-                    <div className="flex rounded-md shadow-sm">
-                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground sm:text-sm">
-                            /lp/
-                        </span>
-                        <Input
-                            id="slug"
-                            className="rounded-l-none"
-                            value={slug}
-                            onChange={(e) => setSlug(e.target.value)}
-                            placeholder="data-analytics-spring"
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="courseName">Course Name (Optional)</Label>
-                        <Input
-                            id="courseName"
-                            value={courseName}
-                            onChange={(e) => setCourseName(e.target.value)}
-                            placeholder="e.g. PG in Data Analytics"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="campaignTag">Campaign Tag (Optional)</Label>
-                        <Input
-                            id="campaignTag"
-                            value={campaignTag}
-                            onChange={(e) => setCampaignTag(e.target.value)}
-                            placeholder="e.g. spring-2025-meta"
-                        />
-                    </div>
-                </div>
-
-                <div className="pt-4 flex items-center justify-end gap-3 border-t">
-                    <Button type="button" variant="outline" onClick={() => router.push('/admin')}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" disabled={isLoading || !title || !slug}>
-                        {isLoading ? 'Creating...' : 'Create & Edit Template'}
-                    </Button>
-                </div>
-            </form>
         </div>
     );
 }

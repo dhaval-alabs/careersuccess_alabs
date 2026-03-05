@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { updateSiteSettings } from '@/app/actions/settings';
-import { Save, CheckCircle2 } from 'lucide-react';
+import { Save, CheckCircle2, Shield, Globe, Mail } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
     const [isPending, startTransition] = useTransition();
@@ -25,62 +25,90 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl text-sm">
-            <div className="space-y-4">
-                <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                        Default GA4 Measurement ID
-                    </label>
-                    <input
-                        type="text"
-                        name="ga4_id"
-                        defaultValue={initialSettings?.default_ga4_id || ''}
-                        placeholder="G-XXXXXXXXXX"
-                        className="w-full px-3 py-2 border rounded-md focus:ring-primary focus:border-primary"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">Used for Google Analytics tracking if the page doesn't have a specific ID.</p>
+        <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
+            <div className="grid gap-8">
+                {/* Tracking Section */}
+                <div className="premium-card p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <Globe size={20} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-900 font-sora">Marketing Tracking</h3>
+                            <p className="text-slate-500 text-sm">Global analytics and advertising identifiers.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">GA4 Measurement ID</label>
+                            <input
+                                type="text"
+                                name="ga4_id"
+                                defaultValue={initialSettings?.default_ga4_id || ''}
+                                placeholder="G-XXXXXXXXXX"
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-100 focus:bg-white transition-all shadow-sm"
+                            />
+                            <p className="text-[10px] text-slate-400 font-medium">Primary Google Analytics connector.</p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">Meta Pixel ID</label>
+                            <input
+                                type="text"
+                                name="pixel_id"
+                                defaultValue={initialSettings?.default_pixel_id || ''}
+                                placeholder="123456789012345"
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-100 focus:bg-white transition-all shadow-sm"
+                            />
+                            <p className="text-[10px] text-slate-400 font-medium">Fallback Facebook tracking identifier.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                        Default Meta Pixel ID
-                    </label>
-                    <input
-                        type="text"
-                        name="pixel_id"
-                        defaultValue={initialSettings?.default_pixel_id || ''}
-                        placeholder="123456789012345"
-                        className="w-full px-3 py-2 border rounded-md focus:ring-primary focus:border-primary"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">Used for Facebook/Meta Ad tracking fallback.</p>
-                </div>
+                {/* Communication Section */}
+                <div className="premium-card p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <Mail size={20} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-900 font-sora">System Notifications</h3>
+                            <p className="text-slate-500 text-sm">Configure how the platform contacts you.</p>
+                        </div>
+                    </div>
 
-                <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                        System Contact Email
-                    </label>
-                    <input
-                        type="email"
-                        name="contact_email"
-                        defaultValue={initialSettings?.contact_email || ''}
-                        placeholder="admin@example.com"
-                        className="w-full px-3 py-2 border rounded-md focus:ring-primary focus:border-primary"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">Primary contact for system notices.</p>
+                    <div className="space-y-2 max-w-md">
+                        <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">Admin Contact Email</label>
+                        <input
+                            type="email"
+                            name="contact_email"
+                            defaultValue={initialSettings?.contact_email || ''}
+                            placeholder="admin@analytixlabs.co.in"
+                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-100 focus:bg-white transition-all shadow-sm"
+                        />
+                        <p className="text-[10px] text-slate-400 font-medium">Destination for system alerts and critical updates.</p>
+                    </div>
                 </div>
             </div>
 
-            <div className="pt-4 flex items-center gap-4">
-                <Button type="submit" disabled={isPending}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {isPending ? 'Saving...' : 'Save Settings'}
-                </Button>
+            <div className="flex items-center gap-6 pt-4 px-2">
+                <button
+                    type="submit"
+                    disabled={isPending}
+                    className="bg-slate-900 text-white hover:bg-slate-800 px-8 py-3.5 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-slate-200 disabled:opacity-50"
+                >
+                    <Save size={18} />
+                    {isPending ? 'Saving Changes...' : 'Update Settings'}
+                </button>
                 {saved && (
-                    <span className="text-green-600 flex items-center font-medium animate-in fade-in">
-                        <CheckCircle2 className="h-4 w-4 mr-1" /> Settings saved successfully
-                    </span>
+                    <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm animate-in fade-in slide-in-from-left-4">
+                        <CheckCircle2 size={18} />
+                        <span>Changes stored successfully</span>
+                    </div>
                 )}
             </div>
         </form>
     );
 }
+

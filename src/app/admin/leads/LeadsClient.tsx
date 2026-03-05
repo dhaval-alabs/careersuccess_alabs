@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Search, Trash2, Eye, User, Clock, MapPin, MousePointer2, FileCheck, History } from 'lucide-react';
+import { Download, Search, Trash2, Eye, User, Clock, MapPin, MousePointer2, FileCheck, History, Calendar, Filter, X } from 'lucide-react';
 import { deleteLead, getLeadTimeline } from '@/app/actions/leads';
 
 export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
@@ -31,12 +31,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
     const sources = Array.from(new Set(leads.map(l => l.form_source).filter(Boolean)));
 
     const handleExport = () => {
-        if (filteredLeads.length === 0) return alert("No leads to export.");
-
-        // Define Headers
         const headers = ["Date", "Name", "Email", "Phone", "Source", "Session ID"];
-
-        // Build CSV rows
         const rows = filteredLeads.map(lead => [
             new Date(lead.created_at).toLocaleString(),
             `"${lead.name || ''}"`,
@@ -46,11 +41,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
             `"${lead.session_id || ''}"`
         ]);
 
-        const csvContent = [
-            headers.join(","),
-            ...rows.map(r => r.join(","))
-        ].join("\n");
-
+        const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -62,252 +53,298 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
     };
 
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Are you sure you want to delete the lead for ${name}?`)) return;
-
+        if (!confirm(`Are you sure you want to delete lead for ${name}?`)) return;
         try {
             await deleteLead(id);
             setLeads(leads.filter(l => l.id !== id));
-        } catch (error) {
-            alert("Failed to delete lead.");
-        }
+        } catch (error) { alert("Failed to delete lead."); }
     };
 
     const handleViewDetails = async (lead: any) => {
         setViewingLead(lead);
         setIsLoadingTimeline(true);
         setTimeline([]);
-
         try {
             const events = await getLeadTimeline(lead.session_id);
             setTimeline(events);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoadingTimeline(false);
-        }
+        } catch (error) { console.error(error); } finally { setIsLoadingTimeline(false); }
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-theme(spacing.24))]">
-            <div className="bg-white border-b px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between shadow-sm shrink-0 rounded-t-lg gap-4">
+        <div className="space-y-6 pb-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl font-bold tracking-tight text-slate-900">Leads Inbox</h1>
-                    <p className="text-sm text-slate-500 mt-1">Manage and export your collected leads ({filteredLeads.length} total)</p>
+                    <h1 className="text-3xl font-bold text-slate-900 font-sora">Lead Intelligence</h1>
+                    <p className="text-slate-500 mt-1">Detailed journey tracking and export controls.</p>
                 </div>
-
                 <div className="flex items-center gap-3">
-                    <Button onClick={handleExport} variant="outline" className="bg-white hover:bg-slate-50 border-slate-200">
-                        <Download className="mr-2 h-4 w-4" /> Export CSV
-                    </Button>
-                </div>
-            </div>
-
-            <div className="flex flex-row p-4 gap-4 bg-slate-50 border-b">
-                {/* Search */}
-                <div className="relative max-w-sm flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search className="h-4 w-4 text-slate-400" />
+                    <button
+                        onClick={handleExport}
+                        className="bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm"
+                    >
+                        <Download size={18} className="text-slate-400" />
+                        <span>Export CSV</span>
+                    </button>
+                    <div className="w-px h-8 bg-slate-200 mx-1 hidden md:block" />
+                    <div className="relative group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search leads..."
+                            className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm w-64 focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all shadow-sm"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                     </div>
-                    <input
-                        type="text"
-                        placeholder="Search name, email, or phone..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-md leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
-                    />
                 </div>
-
-                {/* Source Filter */}
-                <select
-                    value={selectedSource}
-                    onChange={(e) => setSelectedSource(e.target.value)}
-                    className="block w-48 pl-3 pr-10 py-2 border border-slate-200 text-slate-700 bg-white rounded-md leading-5 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
-                >
-                    <option value="all">All Sources</option>
-                    {sources.map(s => (
-                        <option key={s} value={s}>{s}</option>
-                    ))}
-                </select>
             </div>
 
-            <div className="flex-1 overflow-auto bg-white rounded-b-lg">
-                <table className="min-w-full divide-y divide-slate-200 relative">
-                    <thead className="bg-slate-50 sticky top-0 z-10 shadow-[0_1px_0_rgba(0,0,0,0.1)]">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Contact Info</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Source</th>
-                            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-slate-100">
-                        {filteredLeads.length === 0 ? (
-                            <tr>
-                                <td colSpan={5} className="px-6 py-10 text-center text-slate-500 text-sm">
-                                    No leads found matching your criteria.
-                                </td>
+            <div className="premium-card overflow-hidden border-none shadow-xl">
+                <div className="p-4 border-b border-slate-50 bg-slate-50/30 flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest px-2">
+                        <Filter size={14} />
+                        <span>Quick Filters</span>
+                    </div>
+                    <div className="flex gap-2">
+                        {['all', ...sources].map(s => (
+                            <button
+                                key={s}
+                                onClick={() => setSelectedSource(s)}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedSource === s
+                                    ? 'bg-slate-900 border-slate-900 text-white shadow-md'
+                                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                    }`}
+                            >
+                                {s === 'all' ? 'All Channels' : s}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b border-slate-50">
+                                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Inquiry Date</th>
+                                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Lead Profile</th>
+                                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Marketing Intel</th>
+                                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Channel</th>
+                                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
                             </tr>
-                        ) : (
-                            filteredLeads.map((lead) => (
-                                <tr key={lead.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                        {new Date(lead.created_at).toLocaleDateString()}<br />
-                                        <span className="text-xs text-slate-400">{new Date(lead.created_at).toLocaleTimeString()}</span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs ring-1 ring-primary/20">
-                                                {(lead.name || '?')[0].toUpperCase()}
-                                            </div>
-                                            <div className="ml-3">
-                                                <div className="text-sm font-medium text-slate-900">{lead.name || 'Unknown'}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-slate-900">{lead.email || '—'}</div>
-                                        <div className="text-sm text-slate-500">{lead.phone || '—'}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-                                            {lead.form_source || 'Unknown'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button
-                                            onClick={() => handleViewDetails(lead)}
-                                            className="text-primary hover:text-primary/80 mr-4 transition-colors p-1"
-                                            title="View Details & Timeline"
-                                        >
-                                            <Eye className="h-4 w-4 inline" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(lead.id, lead.name)}
-                                            className="text-red-500 hover:text-red-700 transition-colors p-1"
-                                            title="Delete Lead"
-                                        >
-                                            <Trash2 className="h-4 w-4 inline" />
-                                        </button>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {filteredLeads.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                                        No leads found matching your criteria.
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : (
+                                filteredLeads.map((lead) => (
+                                    <tr key={lead.id} className="group hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-slate-900">
+                                                    {new Date(lead.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
+                                                </span>
+                                                <span className="text-[10px] font-medium text-slate-400 uppercase mt-0.5">
+                                                    {new Date(lead.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold group-hover:bg-white transition-colors border border-transparent group-hover:border-slate-100">
+                                                    {(lead.name || '?')[0].toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold text-slate-900 leading-none">{lead.name || 'Anonymous'}</div>
+                                                    <div className="text-[10px] text-slate-400 mt-1 font-medium">{lead.email}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5">
+                                            <div className="flex flex-col gap-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter w-10">GCLID</span>
+                                                    <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded ${lead.gclid ? 'bg-indigo-50 text-indigo-600 font-bold' : 'text-slate-300'}`}>
+                                                        {lead.gclid ? (lead.gclid.length > 12 ? lead.gclid.slice(0, 12) + '...' : lead.gclid) : '—'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter w-10">KEYW</span>
+                                                    <span className={`text-[11px] font-medium ${lead.source_keyword ? 'text-slate-700' : 'text-slate-300 italic'}`}>
+                                                        {lead.source_keyword || 'not captured'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <span className="bg-slate-50 text-slate-500 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-slate-100 uppercase tracking-wide">
+                                                {lead.form_source || 'Unknown'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-5 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleViewDetails(lead)}
+                                                    className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-all"
+                                                    title="View Journey"
+                                                >
+                                                    <Eye size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(lead.id, lead.name)}
+                                                    className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-all"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            {/* View Details Modal Overlay */}
+            {/* Premium Journey Modal */}
             {viewingLead && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-300 border border-white/20">
 
-                        {/* Modal Header */}
-                        <div className="px-6 py-4 border-b flex justify-between items-center bg-slate-50 shrink-0">
-                            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <User className="h-5 w-5 text-primary" /> Lead Details
-                            </h3>
-                            <button onClick={() => setViewingLead(null)} className="text-slate-400 hover:text-slate-600 focus:outline-none text-2xl leading-none">&times;</button>
-                        </div>
-
-                        {/* Modal Body */}
-                        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-
-                            {/* Left: Lead Info */}
-                            <div className="w-full md:w-1/3 border-r bg-white p-6 overflow-y-auto shrink-0">
-                                <h4 className="font-semibold text-slate-800 mb-4 border-b pb-2">Submitted Information</h4>
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase">Name</label>
-                                        <div className="text-sm font-medium text-slate-900 mt-0.5">{viewingLead.name || '—'}</div>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase">Email</label>
-                                        <div className="text-sm font-medium text-slate-900 mt-0.5">{viewingLead.email || '—'}</div>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase">Phone</label>
-                                        <div className="text-sm font-medium text-slate-900 mt-0.5">{viewingLead.phone || '—'}</div>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase">Submission Date</label>
-                                        <div className="text-sm font-medium text-slate-900 mt-0.5">{new Date(viewingLead.created_at).toLocaleString()}</div>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase">Form Source</label>
-                                        <div className="mt-1">
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-                                                {viewingLead.form_source || 'Unknown'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase">Session ID</label>
-                                        <div className="text-xs font-mono text-slate-600 mt-0.5 break-all bg-slate-50 p-2 border rounded">{viewingLead.session_id || '—'}</div>
+                        <div className="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50 shrink-0">
+                            <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 rounded-3xl bg-slate-900 flex items-center justify-center text-white text-xl font-bold shadow-xl shadow-slate-200">
+                                    {(viewingLead.name || '?')[0].toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-bold text-slate-900 font-sora">{viewingLead.name || 'Anonymous Intelligence'}</h3>
+                                    <div className="flex items-center gap-3 text-slate-500 text-sm mt-1">
+                                        <span className="flex items-center gap-1.5"><Calendar size={14} /> {new Date(viewingLead.created_at).toLocaleDateString()}</span>
+                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                                        <span className="flex items-center gap-1.5"><MousePointer2 size={14} /> SID: {viewingLead.session_id?.slice(0, 8)}...</span>
                                     </div>
                                 </div>
                             </div>
+                            <button onClick={() => setViewingLead(null)} className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all hover:shadow-sm">
+                                <X size={24} />
+                            </button>
+                        </div>
 
-                            {/* Right: Timeline */}
-                            <div className="w-full md:w-2/3 bg-slate-50 p-0 flex flex-col overflow-hidden">
-                                <div className="px-6 py-4 border-b bg-white shrink-0 flex items-center gap-2">
-                                    <Clock className="h-4 w-4 text-slate-500" />
-                                    <h4 className="font-semibold text-slate-800">User Journey Timeline</h4>
+                        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+                            {/* Left Side: Static Data */}
+                            <div className="w-full md:w-80 bg-slate-50/50 p-10 overflow-y-auto border-r border-slate-50">
+                                <div className="space-y-8">
+                                    <section>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block">Core Identity</label>
+                                        <div className="space-y-5">
+                                            <div>
+                                                <div className="text-[10px] font-bold text-slate-400 mb-1">Email Address</div>
+                                                <div className="text-sm font-bold text-slate-900 break-all">{viewingLead.email || '—'}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-[10px] font-bold text-slate-400 mb-1">Direct Phone</div>
+                                                <div className="text-sm font-bold text-slate-900">{viewingLead.phone || '—'}</div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block">Source Attribution</label>
+                                        <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                                            <div className="text-[10px] font-bold text-slate-400 mb-1">Channel</div>
+                                            <div className="text-xs font-bold text-slate-900 uppercase tracking-wide">{viewingLead.form_source || 'Direct Traffic'}</div>
+                                        </div>
+                                    </section>
+
+                                    <section>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block">Session Metadata</label>
+                                        <div className="text-[10px] font-mono text-slate-500 bg-slate-100/50 p-4 rounded-2xl border border-slate-100 break-all uppercase leading-relaxed">
+                                            {viewingLead.session_id || 'NOT_CAPTURED'}
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+
+                            {/* Right Side: Timeline */}
+                            <div className="flex-1 bg-white flex flex-col overflow-hidden">
+                                <div className="px-10 py-6 border-b border-slate-50 flex items-center justify-between shrink-0">
+                                    <h4 className="font-bold text-slate-900 flex items-center gap-2">
+                                        <History className="text-slate-400" size={18} />
+                                        <span>User Interaction Timeline</span>
+                                    </h4>
+                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{timeline.length} Events Recorded</div>
                                 </div>
 
-                                <div className="flex-1 overflow-y-auto p-6">
+                                <div className="flex-1 overflow-y-auto p-10 bg-slate-50/20">
                                     {isLoadingTimeline ? (
-                                        <div className="flex justify-center items-center h-full text-sm text-slate-500">Loading timeline events...</div>
+                                        <div className="flex flex-col items-center justify-center h-full gap-4">
+                                            <div className="w-10 h-10 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin" />
+                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Reconstructing Journey...</span>
+                                        </div>
                                     ) : timeline.length === 0 ? (
-                                        <div className="flex flex-col justify-center items-center h-full text-slate-400 text-sm bg-white border border-dashed rounded-lg p-8">
-                                            <History className="h-8 w-8 mb-2 opacity-30" />
-                                            <span>No tracking events found for this session.</span>
-                                            <span className="text-xs mt-1 text-slate-400/70">The user may have blocked tracking scripts.</span>
+                                        <div className="flex flex-col items-center justify-center h-full text-center">
+                                            <div className="w-20 h-20 rounded-[32px] bg-white border-2 border-dashed border-slate-100 flex items-center justify-center text-slate-200 mb-6">
+                                                <History size={40} />
+                                            </div>
+                                            <h5 className="font-bold text-slate-900 font-sora">No Path Recorded</h5>
+                                            <p className="text-sm text-slate-400 mt-2 max-w-xs mx-auto">This lead may have interacted with the site before tracking was enabled or used an ad-blocker.</p>
                                         </div>
                                     ) : (
-                                        <div className="relative border-l-2 border-slate-200 ml-3 space-y-6 pb-6">
-                                            {timeline.map((event) => {
-                                                const isClick = event.event_type === 'click';
-                                                const isSection = event.event_type === 'section_view';
-
-                                                return (
-                                                    <div key={event.id} className="relative pl-6">
-                                                        {/* Timeline node */}
-                                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center shadow-sm ${isClick ? 'bg-blue-500' : isSection ? 'bg-purple-500' : 'bg-slate-400'}`}></div>
-
-                                                        {/* Event Card */}
-                                                        <div className="bg-white p-3 rounded-lg border shadow-sm flex flex-col gap-1 hover:shadow-md transition-shadow">
-                                                            <div className="flex justify-between items-start">
-                                                                <div className="flex items-center gap-1.5 font-medium text-sm text-slate-800">
-                                                                    {isClick && <MousePointer2 className="h-3.5 w-3.5 text-blue-500" />}
-                                                                    {isSection && <Eye className="h-3.5 w-3.5 text-purple-500" />}
-                                                                    {isClick ? 'Clicked Element' : isSection ? 'Viewed Section' : event.event_type}
-                                                                </div>
-                                                                <div className="text-[10px] text-slate-400 font-mono">
+                                        <div className="relative pl-8">
+                                            <div className="absolute left-[3px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-slate-200 via-slate-200 to-transparent" />
+                                            <div className="space-y-10">
+                                                {timeline.map((event, idx) => {
+                                                    const isClick = event.event_type === 'click';
+                                                    return (
+                                                        <div key={event.id} className="relative group/item">
+                                                            <div className={`absolute -left-[33px] top-1.5 w-6 h-6 rounded-xl border-4 border-slate-50 flex items-center justify-center z-10 transition-all shadow-sm ${isClick ? 'bg-blue-500' : 'bg-purple-500'
+                                                                }`}>
+                                                                {isClick ? <MousePointer2 size={10} className="text-white" /> : <Eye size={10} className="text-white" />}
+                                                            </div>
+                                                            <div className="flex gap-6 items-start">
+                                                                <div className="text-[10px] font-black text-slate-300 font-mono mt-2 tabular-nums group-hover/item:text-slate-900 transition-colors">
                                                                     {new Date(event.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                                                                 </div>
-                                                            </div>
-                                                            <div className="text-sm text-slate-600 font-mono bg-slate-50 px-2 py-1 rounded inline-block w-fit mt-1 border border-slate-100">
-                                                                {event.element_id}
-                                                            </div>
-                                                            {event.page_url && (
-                                                                <div className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                                                                    <MapPin className="h-3 w-3" /> {new URL(event.page_url, "https://example.com").pathname}
+                                                                <div className="flex-1 bg-white p-5 rounded-3xl border border-slate-100 shadow-sm group-hover/item:shadow-md transition-all group-hover/item:border-slate-200 ring-4 ring-transparent group-hover/item:ring-slate-50">
+                                                                    <div className="flex items-center gap-2 mb-3">
+                                                                        <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${isClick ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'
+                                                                            }`}>
+                                                                            {isClick ? 'Interaction' : 'Vision'}
+                                                                        </span>
+                                                                        <span className="text-xs font-bold text-slate-900">{isClick ? 'Clicked Component' : 'Viewed Section'}</span>
+                                                                    </div>
+                                                                    <div className="text-sm font-mono text-slate-600 bg-slate-50 px-3 py-2 rounded-xl mb-3 border border-slate-100/50">
+                                                                        {event.element_id}
+                                                                    </div>
+                                                                    {event.page_url && (
+                                                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
+                                                                            <MapPin size={12} className="text-slate-300" />
+                                                                            <span className="truncate">{new URL(event.page_url, "https://example.com").pathname}</span>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
-                                                            )}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                );
-                                            })}
+                                                    );
+                                                })}
 
-                                            {/* Final submission node */}
-                                            <div className="relative pl-6 pt-2">
-                                                <div className="absolute -left-[11px] top-4 w-5 h-5 rounded-full border-2 border-white bg-green-500 flex items-center justify-center shadow-sm z-10">
-                                                    <FileCheck className="h-3 w-3 text-white" />
-                                                </div>
-                                                <div className="bg-green-50 border-green-200 p-3 rounded-lg border shadow-sm">
-                                                    <div className="font-medium text-sm text-green-800">Form Submitted</div>
-                                                    <div className="text-xs text-green-600 mt-1">Source: {viewingLead.form_source}</div>
+                                                {/* Conversion Node */}
+                                                <div className="relative pt-4">
+                                                    <div className="absolute -left-[35px] top-6 w-8 h-8 rounded-2xl bg-emerald-500 border-4 border-white flex items-center justify-center shadow-xl z-20">
+                                                        <FileCheck size={16} className="text-white" />
+                                                    </div>
+                                                    <div className="ml-14 bg-emerald-50 p-6 rounded-[32px] border border-emerald-100 shadow-lg shadow-emerald-50">
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <div className="text-xs font-black text-emerald-600 uppercase tracking-widest bg-white/50 px-2 py-1 rounded">Conversion Point</div>
+                                                            <div className="text-[10px] font-mono font-bold text-emerald-400">{new Date(viewingLead.created_at).toLocaleTimeString()}</div>
+                                                        </div>
+                                                        <h6 className="text-lg font-bold text-emerald-900 font-sora">Lead Secured</h6>
+                                                        <p className="text-sm text-emerald-700 mt-1">Form submitted from the Curriculumn section.</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -321,3 +358,4 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         </div>
     );
 }
+

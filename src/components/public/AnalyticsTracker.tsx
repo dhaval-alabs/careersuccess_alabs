@@ -16,40 +16,58 @@ export function AnalyticsTracker({ ga4Id, metaPixelId, pageId }: AnalyticsTracke
     const pathname = usePathname();
     const sessionId = useLeadTracker();
 
-    // 1. UTM Parameter Capture - Isolated for searchParams dependency
+    // 1. UTM Parameter Capture - Enhanced for hash-based parameters and direct extraction
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
-        const utmObj: Record<string, string> = {};
-        const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'keyword', 'matchtype'];
+        const captureUtms = () => {
+            const utmObj: Record<string, string> = {};
+            const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'keyword', 'matchtype', 'msclkid'];
 
-        let hasUtms = false;
+            let hasUtms = false;
+            const fullUrlSearchAndHash = window.location.search + window.location.hash;
 
-        // Next.js searchParams misses parameters that fall after a '#' hash fragment (e.g. ad networks appending ?gclid=x to an anchor link)
-        const fullHashAndSearch = window.location.search + window.location.hash;
+            // Standard URL Search Params
+            const urlParams = new URLSearchParams(window.location.search);
 
-        utmKeys.forEach(key => {
-            let val = searchParams.get(key);
+            utmKeys.forEach(key => {
+                let val = urlParams.get(key);
 
-            // Backup regex check for parameters stuck inside the hash fragment
-            if (!val) {
-                const regex = new RegExp(`[?&]${key}=([^&#]*)`, 'i');
-                const match = fullHashAndSearch.match(regex);
-                if (match && match[1]) {
-                    val = match[1];
+                // Backup: Check hash fragment specifically for parameters appended after #
+                if (!val) {
+                    // This handles formats like #section?gclid=123 or #?gclid=123
+                    const regex = new RegExp(`[?&]${key}=([^&#]*)`, 'i');
+                    const match = fullUrlSearchAndHash.match(regex);
+                    if (match && match[1]) {
+                        val = decodeURIComponent(match[1]);
+                    }
                 }
-            }
 
-            if (val) {
-                utmObj[key] = val;
-                hasUtms = true;
-            }
-        });
+                if (val) {
+                    utmObj[key] = val;
+                    hasUtms = true;
+                }
+            });
 
-        if (hasUtms) {
-            sessionStorage.setItem('current_utms', JSON.stringify(utmObj));
-        }
-    }, [searchParams]);
+            if (hasUtms) {
+                // Merge with existing to avoid overwriting captured values from previous page in same session
+                const existing = sessionStorage.getItem('current_utms');
+                let finalUtms = utmObj;
+                if (existing) {
+                    try {
+                        finalUtms = { ...JSON.parse(existing), ...utmObj };
+                    } catch (e) { }
+                }
+                sessionStorage.setItem('current_utms', JSON.stringify(finalUtms));
+            }
+        };
+
+        captureUtms();
+
+        // Listen for hash changes specifically
+        window.addEventListener('hashchange', captureUtms);
+        return () => window.removeEventListener('hashchange', captureUtms);
+    }, [pathname, searchParams]);
 
     // 2. Custom page_view event & tracking initialization - Isolated for pathname dependency
     useEffect(() => {
