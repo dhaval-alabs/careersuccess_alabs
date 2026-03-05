@@ -74,7 +74,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         <div className="space-y-6 pb-12">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 font-sora">Lead Intelligence</h1>
+                    <h1 className="text-3xl font-bold text-slate-900 font-sora">Lead Intelligence {leads.length > 0 && `(${leads.length})`}</h1>
                     <p className="text-slate-500 mt-1">Detailed journey tracking and export controls.</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -136,7 +136,9 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
                             {filteredLeads.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
-                                        No leads found matching your criteria.
+                                        {leads.length === 0
+                                            ? "No leads have been captured yet."
+                                            : "No leads found matching your search or filters."}
                                     </td>
                                 </tr>
                             ) : (

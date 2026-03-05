@@ -1,20 +1,24 @@
-import { Suspense } from 'react';
-import { getLeads } from '@/app/actions/leads';
+import { createClient } from '@/utils/supabase/server';
 import LeadsClient from './LeadsClient';
-import { Loader2 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LeadsPage() {
-    const leads = await getLeads();
+    const supabase = await createClient();
+
+    // Exact same query structure as the working dashboard
+    const { data: leads, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Leads fetch error:", error);
+    }
 
     return (
-        <Suspense fallback={
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-        }>
+        <div className="fade-up">
             <LeadsClient initialLeads={leads || []} />
-        </Suspense>
+        </div>
     );
 }
