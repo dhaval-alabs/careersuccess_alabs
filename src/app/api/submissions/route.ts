@@ -1,25 +1,12 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@/utils/supabase/server';
 
 // Simple in-memory store for rate limiting IP addresses
 const rateLimitMap = new Map<string, number[]>();
 
 export async function POST(req: Request) {
     try {
-        // We use the service role key to insert submissions without RLS issues,
-        // since this is a public unauthenticated endpoint.
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (!supabaseUrl || !supabaseServiceKey) {
-            console.error('Missing Supabase environment variables');
-            return NextResponse.json(
-                { error: 'Internal Server Error - configuration missing' },
-                { status: 500 }
-            );
-        }
-
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const supabase = createAdminClient();
 
         const body = await req.json();
         const { page_id, data, utms } = body;

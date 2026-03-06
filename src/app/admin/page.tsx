@@ -186,7 +186,7 @@ export default async function DashboardPage() {
                         ))}
                     </div>
                     <Link
-                        href="/admin/inbox"
+                        href="/admin/leads"
                         className="mt-8 w-full block text-center py-3 text-sm font-bold text-slate-600 hover:text-slate-900 border-t border-slate-50 transition-colors"
                     >
                         View All Leads →

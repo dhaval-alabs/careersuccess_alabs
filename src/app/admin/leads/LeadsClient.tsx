@@ -6,6 +6,7 @@ import { Download, Search, Trash2, Eye, User, Clock, MapPin, MousePointer2, File
 import { deleteLead, getLeadTimeline } from '@/app/actions/leads';
 
 export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
+    console.log("LeadsClient initialized with", initialLeads.length, "leads");
     const [leads, setLeads] = useState(initialLeads);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSource, setSelectedSource] = useState('all');

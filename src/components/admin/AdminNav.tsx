@@ -20,7 +20,7 @@ export function AdminNav() {
     const navItems = [
         { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
         { label: 'Pages', href: '/admin/pages', icon: FileText },
-        { label: 'Leads', href: '/admin/inbox', icon: Inbox },
+        { label: 'Leads', href: '/admin/leads', icon: Inbox },
         { label: 'Settings', href: '/admin/settings', icon: Settings },
     ];
 

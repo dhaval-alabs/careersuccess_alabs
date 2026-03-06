@@ -1,22 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@/utils/supabase/server';
 // @ts-ignore
 import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-    // We intentionally use the service role key here because this is a background cron job
-    // and it needs admin privileges to publish pages and insert versions bypassing RLS.
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const cronSecret = process.env.CRON_SECRET;
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-        console.error('Missing Supabase environment variables');
-        return new Response('Internal Server Error - configuration missing', { status: 500 });
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createAdminClient();
 
     // 1. Authenticate the cron request
     const authHeader = request.headers.get('authorization');
